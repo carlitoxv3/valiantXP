@@ -15,5 +15,6 @@ public interface IUnitOfWork : IDisposable
     IPrizeRepository Prizes { get; }
     IUserPrizeRepository UserPrizes { get; }
     ICodeRepository Codes { get; }
+    IFailedAttemptRepository FailedAttempts { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

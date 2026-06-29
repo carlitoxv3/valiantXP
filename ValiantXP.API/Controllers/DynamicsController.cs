@@ -49,7 +49,8 @@ public class DynamicsController : ControllerBase
             return Unauthorized();
         }
 
-        var command = new SubmitChallengeCommand(id, userId, dto.Inputs);
+        var remoteIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var command = new SubmitChallengeCommand(id, userId, dto.Inputs, remoteIp);
         var result = await _sender.Send(command);
 
         if (!result.IsSuccess)

@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Prize> Prizes => Set<Prize>();
     public DbSet<UserPrize> UserPrizes => Set<UserPrize>();
     public DbSet<Code> Codes => Set<Code>();
+    public DbSet<FailedAttempt> FailedAttempts => Set<FailedAttempt>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

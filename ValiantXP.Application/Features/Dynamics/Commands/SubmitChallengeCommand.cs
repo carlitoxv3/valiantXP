@@ -2,31 +2,42 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using ValiantXP.Application.AntiFraud;
 using ValiantXP.Application.Common;
 using ValiantXP.Application.Common.Interfaces;
 using ValiantXP.Application.DTOs;
+using ValiantXP.Domain.AntiFraud;
 using ValiantXP.Domain.Entities;
 using ValiantXP.Domain.Enums;
 using ValiantXP.Domain.Events;
+using ValiantXP.Domain.Exceptions;
 using ValiantXP.Domain.Interfaces;
 
 namespace ValiantXP.Application.Features.Dynamics.Commands;
 
-public record SubmitChallengeCommand(Guid ChallengeId, Guid UserId, Dictionary<string, string> Inputs) : IRequest<Result<ChallengeResultDto>>;
+public record SubmitChallengeCommand(Guid ChallengeId, Guid UserId, Dictionary<string, string> Inputs, string? RemoteIp = null)
+    : IRequest<Result<ChallengeResultDto>>;
 
 public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeCommand, Result<ChallengeResultDto>>
 {
     private readonly IDynamicService _dynamicService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPublisher _publisher;
+    private readonly IAntiFraudPipeline _antiFraudPipeline;
 
-    public SubmitChallengeCommandHandler(IDynamicService dynamicService, IUnitOfWork unitOfWork, IPublisher publisher)
+    public SubmitChallengeCommandHandler(
+        IDynamicService dynamicService,
+        IUnitOfWork unitOfWork,
+        IPublisher publisher,
+        IAntiFraudPipeline antiFraudPipeline)
     {
         _dynamicService = dynamicService;
         _unitOfWork = unitOfWork;
         _publisher = publisher;
+        _antiFraudPipeline = antiFraudPipeline;
     }
 
     public async Task<Result<ChallengeResultDto>> Handle(SubmitChallengeCommand request, CancellationToken cancellationToken)
@@ -34,55 +45,73 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
         // 1. Verify challenge exists and is active
         var challenge = await _unitOfWork.DynamicChallenges.GetAsync(request.ChallengeId, cancellationToken);
         if (challenge == null)
-        {
             return Result<ChallengeResultDto>.Failure("Challenge not found.");
-        }
 
         if (!challenge.IsActive)
-        {
             return Result<ChallengeResultDto>.Failure("Challenge is inactive.");
-        }
 
         // 2. Verify campaign is active
         var campaign = await _unitOfWork.Campaigns.GetAsync(challenge.CampaignId, cancellationToken);
         if (campaign == null)
-        {
             return Result<ChallengeResultDto>.Failure("Campaign not found.");
-        }
 
         if (!campaign.IsActive)
-        {
             return Result<ChallengeResultDto>.Failure("Campaign is inactive.");
-        }
 
-        var now = DateTime.UtcNow;
-        if (now < campaign.StartDate || now > campaign.EndDate)
+        // 3. Deserialize per-challenge anti-fraud config (falls back to defaults if null/invalid)
+        var antiFraudConfig = DeserializeAntiFraudConfig(challenge.AntiFraudConfigJson);
+
+        // 4. Build anti-fraud context
+        var antiFraudContext = new AntiFraudContext
         {
-            return Result<ChallengeResultDto>.Failure("Campaign is not currently active.");
+            UserId = request.UserId,
+            ChallengeId = request.ChallengeId,
+            CampaignId = challenge.CampaignId,
+            ChallengeType = challenge.Type,
+            RemoteIp = request.RemoteIp,
+            Inputs = request.Inputs,
+            Config = antiFraudConfig,
+            CampaignStartDate = campaign.StartDate,
+            CampaignEndDate = campaign.EndDate
+        };
+
+        // 5. Run anti-fraud pipeline BEFORE executing the dynamic strategy
+        try
+        {
+            await _antiFraudPipeline.RunAsync(antiFraudContext, cancellationToken);
+        }
+        catch (AntiFraudException ex)
+        {
+            // Record the failed attempt if tracking is enabled for this module
+            if (ShouldTrackFailedAttempt(challenge.Type, antiFraudConfig))
+            {
+                await RecordFailedAttemptAsync(request, challenge, ex, cancellationToken);
+            }
+            return Result<ChallengeResultDto>.Failure($"[{ex.RuleCode}] {ex.Message}");
         }
 
-        // 3. Check existing progress
-        var progress = await _unitOfWork.UserChallengeProgresses.GetByUserAndChallengeAsync(request.UserId, request.ChallengeId, cancellationToken);
+        // 6. Check existing progress (already completed)
+        var progress = await _unitOfWork.UserChallengeProgresses.GetByUserAndChallengeAsync(
+            request.UserId, request.ChallengeId, cancellationToken);
+
         if (progress != null && progress.Status == ChallengeStatus.Completed)
-        {
             return Result<ChallengeResultDto>.Failure("You have already completed this challenge.");
-        }
 
-        // 4. Process dynamic execution via service/strategy
-        var dynamicResult = await _dynamicService.ProcessDynamicAsync(request.ChallengeId, request.UserId, request.Inputs, cancellationToken);
+        // 7. Process dynamic execution via service/strategy
+        var dynamicResult = await _dynamicService.ProcessDynamicAsync(
+            request.ChallengeId, request.UserId, request.Inputs, cancellationToken);
 
-        // Calculate score from payload if available
+        // Extract score from payload
         int score = 0;
         if (dynamicResult.Payload is int intScore)
-        {
             score = intScore;
-        }
-        else if (dynamicResult.Payload is IDictionary<string, object> dict && dict.TryGetValue("Score", out var scoreVal) && scoreVal is int dictScore)
-        {
+        else if (dynamicResult.Payload is IDictionary<string, object> dict
+            && dict.TryGetValue("Score", out var scoreVal)
+            && scoreVal is int dictScore)
             score = dictScore;
-        }
 
-        // 5. Update or create user progress
+        // 8. Update or create user progress
+        var now = DateTime.UtcNow;
         if (progress == null)
         {
             progress = new UserChallengeProgress
@@ -108,22 +137,22 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        // 6. If completed, publish Domain Event ChallengeCompletedEvent
+        // 9. If completed, publish Domain Event → InstantWin handler
         if (dynamicResult.Success)
         {
             var completedEvent = new ChallengeCompletedEvent(request.UserId, request.ChallengeId, progress.Id);
             await _publisher.Publish(completedEvent, cancellationToken);
         }
 
-        // 7. Get awarded prizes to return in DTO
+        // 10. Get awarded prizes for response DTO
         var awardedPrizeNames = new List<string>();
         if (dynamicResult.Success)
         {
             var userPrizes = await _unitOfWork.UserPrizes.GetByUserIdAsync(request.UserId, cancellationToken);
             foreach (var up in userPrizes)
             {
-                // Verify the prize belongs to this challenge and was awarded in this transaction (approx)
-                if (up.Prize.DynamicChallengeId == request.ChallengeId && up.AwardedAt >= now.AddSeconds(-10))
+                if (up.Prize.DynamicChallengeId == request.ChallengeId
+                    && up.AwardedAt >= now.AddSeconds(-10))
                 {
                     awardedPrizeNames.Add($"{up.Prize.Name} (Code: {up.Code})");
                 }
@@ -140,5 +169,58 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
         };
 
         return Result<ChallengeResultDto>.Success(resultDto);
+    }
+
+    // ─── Private helpers ───────────────────────────────────────────────────────
+
+    private static AntiFraudCampaignConfig DeserializeAntiFraudConfig(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return new AntiFraudCampaignConfig();
+        try
+        {
+            return JsonSerializer.Deserialize<AntiFraudCampaignConfig>(json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                ?? new AntiFraudCampaignConfig();
+        }
+        catch
+        {
+            return new AntiFraudCampaignConfig();
+        }
+    }
+
+    private static bool ShouldTrackFailedAttempt(DynamicType type, AntiFraudCampaignConfig cfg) =>
+        type switch
+        {
+            DynamicType.Codigo => cfg.Codigo.TrackFailedAttempts,
+            _ => false // Trivia and Encuesta don't track failed attempts by default
+        };
+
+    private async Task RecordFailedAttemptAsync(
+        SubmitChallengeCommand request,
+        DynamicChallenge challenge,
+        AntiFraudException ex,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var attempt = new FailedAttempt
+            {
+                Id = Guid.NewGuid(),
+                UserId = request.UserId,
+                ChallengeId = request.ChallengeId,
+                CampaignId = challenge.CampaignId,
+                SubmittedValue = request.Inputs.TryGetValue("code", out var c) ? c : null,
+                RemoteIp = request.RemoteIp,
+                RuleCode = ex.RuleCode,
+                Reason = ex.Message,
+                AttemptedAt = DateTime.UtcNow
+            };
+            await _unitOfWork.FailedAttempts.AddAsync(attempt, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch
+        {
+            // Recording the attempt must never cause the request to fail with an unexpected error
+        }
     }
 }

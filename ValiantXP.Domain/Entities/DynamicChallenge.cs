@@ -16,6 +16,13 @@ public class DynamicChallenge : Entity
     public bool IsActive { get; set; }
     public Guid? NextChallengeId { get; set; }
 
+    /// <summary>
+    /// JSON blob deserialized to AntiFraudCampaignConfig at runtime.
+    /// Null means all modules use their default limits.
+    /// Each root key maps to a module section: { "Codigo": {...}, "Trivia": {...}, "Encuesta": {...} }
+    /// </summary>
+    public string? AntiFraudConfigJson { get; set; }
+
     public ICollection<Prize> Prizes { get; set; } = new List<Prize>();
     public ICollection<UserChallengeProgress> UserProgresses { get; set; } = new List<UserChallengeProgress>();
 }

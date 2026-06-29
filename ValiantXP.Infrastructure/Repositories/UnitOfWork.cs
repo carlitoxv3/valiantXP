@@ -18,6 +18,7 @@ public class UnitOfWork : IUnitOfWork
     private IPrizeRepository? _prizes;
     private IUserPrizeRepository? _userPrizes;
     private ICodeRepository? _codes;
+    private IFailedAttemptRepository? _failedAttempts;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -33,6 +34,7 @@ public class UnitOfWork : IUnitOfWork
     public IPrizeRepository Prizes => _prizes ??= new PrizeRepository(_context);
     public IUserPrizeRepository UserPrizes => _userPrizes ??= new UserPrizeRepository(_context);
     public ICodeRepository Codes => _codes ??= new CodeRepository(_context);
+    public IFailedAttemptRepository FailedAttempts => _failedAttempts ??= new FailedAttemptRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

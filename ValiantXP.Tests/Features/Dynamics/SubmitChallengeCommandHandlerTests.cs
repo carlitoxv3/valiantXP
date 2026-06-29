@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
 using Moq;
+using ValiantXP.Application.AntiFraud;
 using ValiantXP.Application.Common.Interfaces;
 using ValiantXP.Application.Features.Dynamics.Commands;
+using ValiantXP.Domain.AntiFraud;
 using ValiantXP.Domain.Entities;
 using ValiantXP.Domain.Enums;
 using ValiantXP.Domain.Events;
@@ -42,10 +44,17 @@ public class SubmitChallengeCommandHandlerTests
         _mockDynamicService = new Mock<IDynamicService>();
         _mockPublisher = new Mock<IPublisher>();
 
+        // No-op anti-fraud pipeline for tests that don't need fraud checks
+        var mockAntiFraud = new Mock<IAntiFraudPipeline>();
+        mockAntiFraud
+            .Setup(p => p.RunAsync(It.IsAny<AntiFraudContext>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
         _handler = new SubmitChallengeCommandHandler(
             _mockDynamicService.Object,
             _mockUnitOfWork.Object,
-            _mockPublisher.Object
+            _mockPublisher.Object,
+            mockAntiFraud.Object
         );
     }
 
