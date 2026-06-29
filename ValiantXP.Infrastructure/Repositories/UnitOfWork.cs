@@ -12,6 +12,11 @@ public class UnitOfWork : IUnitOfWork
     private IUserRepository? _users;
     private IRefreshTokenRepository? _refreshTokens;
     private IOtpCodeRepository? _otpCodes;
+    private ICampaignRepository? _campaigns;
+    private IDynamicChallengeRepository? _dynamicChallenges;
+    private IUserChallengeProgressRepository? _userChallengeProgresses;
+    private IPrizeRepository? _prizes;
+    private IUserPrizeRepository? _userPrizes;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -21,6 +26,11 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository Users => _users ??= new UserRepository(_context);
     public IRefreshTokenRepository RefreshTokens => _refreshTokens ??= new RefreshTokenRepository(_context);
     public IOtpCodeRepository OtpCodes => _otpCodes ??= new OtpCodeRepository(_context);
+    public ICampaignRepository Campaigns => _campaigns ??= new CampaignRepository(_context);
+    public IDynamicChallengeRepository DynamicChallenges => _dynamicChallenges ??= new DynamicChallengeRepository(_context);
+    public IUserChallengeProgressRepository UserChallengeProgresses => _userChallengeProgresses ??= new UserChallengeProgressRepository(_context);
+    public IPrizeRepository Prizes => _prizes ??= new PrizeRepository(_context);
+    public IUserPrizeRepository UserPrizes => _userPrizes ??= new UserPrizeRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

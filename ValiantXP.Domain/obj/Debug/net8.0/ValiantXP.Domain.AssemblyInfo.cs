@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ValiantXP.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2e83b3749dfb8f5809c22d27d9d723a091b71461")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a241a8b33b6eebfdd240224e93dbeee9caa2bd23")]
 [assembly: System.Reflection.AssemblyProductAttribute("ValiantXP.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ValiantXP.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

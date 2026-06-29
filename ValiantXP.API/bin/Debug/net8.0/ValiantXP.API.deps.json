@@ -1054,6 +1054,9 @@
         }
       },
       "ValiantXP.Domain/1.0.0": {
+        "dependencies": {
+          "MediatR": "14.1.0"
+        },
         "runtime": {
           "ValiantXP.Domain.dll": {
             "assemblyVersion": "1.0.0",

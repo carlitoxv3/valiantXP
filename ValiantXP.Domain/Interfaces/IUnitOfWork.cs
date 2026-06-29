@@ -9,5 +9,10 @@ public interface IUnitOfWork : IDisposable
     IUserRepository Users { get; }
     IRefreshTokenRepository RefreshTokens { get; }
     IOtpCodeRepository OtpCodes { get; }
+    ICampaignRepository Campaigns { get; }
+    IDynamicChallengeRepository DynamicChallenges { get; }
+    IUserChallengeProgressRepository UserChallengeProgresses { get; }
+    IPrizeRepository Prizes { get; }
+    IUserPrizeRepository UserPrizes { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

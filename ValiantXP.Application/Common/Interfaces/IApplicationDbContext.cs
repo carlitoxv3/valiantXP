@@ -9,5 +9,10 @@ public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
     DbSet<RefreshToken> RefreshTokens { get; }
+    DbSet<Campaign> Campaigns { get; }
+    DbSet<DynamicChallenge> DynamicChallenges { get; }
+    DbSet<UserChallengeProgress> UserChallengeProgresses { get; }
+    DbSet<Prize> Prizes { get; }
+    DbSet<UserPrize> UserPrizes { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

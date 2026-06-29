@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ValiantXP.Application.Common.Interfaces;
 using ValiantXP.Domain.Interfaces;
 using ValiantXP.Infrastructure.Data;
+using ValiantXP.Infrastructure.Dynamics;
 using ValiantXP.Infrastructure.Identity;
 using ValiantXP.Infrastructure.Repositories;
 
@@ -28,6 +29,11 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
+        services.AddScoped<ICampaignRepository, CampaignRepository>();
+        services.AddScoped<IDynamicChallengeRepository, DynamicChallengeRepository>();
+        services.AddScoped<IUserChallengeProgressRepository, UserChallengeProgressRepository>();
+        services.AddScoped<IPrizeRepository, PrizeRepository>();
+        services.AddScoped<IUserPrizeRepository, UserPrizeRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Identity
@@ -39,6 +45,11 @@ public static class DependencyInjection
         // OTP Senders
         services.AddScoped<IEmailOtpSender, EmailOtpSender>();
         services.AddScoped<IWhatsAppOtpSender, WhatsAppOtpSender>();
+
+        // Dynamics Engine
+        services.AddScoped<IDynamicStrategy, TriviaStrategy>();
+        services.AddScoped<IDynamicStrategy, EncuestaStrategy>();
+        services.AddScoped<IDynamicService, DynamicService>();
 
         return services;
     }

@@ -2919,6 +2919,9 @@
       "ValiantXP.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "MediatR": "14.1.0"
+        },
         "compile": {
           "bin/placeholder/ValiantXP.Domain.dll": {}
         },

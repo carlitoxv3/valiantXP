@@ -16,6 +16,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
+    public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<DynamicChallenge> DynamicChallenges => Set<DynamicChallenge>();
+    public DbSet<UserChallengeProgress> UserChallengeProgresses => Set<UserChallengeProgress>();
+    public DbSet<Prize> Prizes => Set<Prize>();
+    public DbSet<UserPrize> UserPrizes => Set<UserPrize>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
