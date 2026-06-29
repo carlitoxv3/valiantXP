@@ -7,6 +7,7 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Valian
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\ValiantXP.API.pdb
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\BCrypt-Net-Next.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
@@ -46,6 +47,7 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Micros
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Otp.NET.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -143,6 +145,7 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\Valian
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ValiantXP.API.csproj.CoreCompileInputs.cache
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ValiantXP.API.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ValiantXP.API.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ValiantXP.API.sourcelink.json
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\staticwebassets\msbuild.ValiantXP.API.Microsoft.AspNetCore.StaticWebAssets.props
@@ -157,5 +160,3 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\refint
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ValiantXP.API.pdb
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ValiantXP.API.genruntimeconfig.cache
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\obj\Debug\net8.0\ref\ValiantXP.API.dll
-C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\BCrypt-Net-Next.dll
-C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.API\bin\Debug\net8.0\Otp.NET.dll

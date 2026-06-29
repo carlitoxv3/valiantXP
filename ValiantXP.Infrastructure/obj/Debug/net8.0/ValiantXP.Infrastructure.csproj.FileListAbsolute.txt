@@ -11,6 +11,7 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\ne
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\ValiantXP.Infrastructure.AssemblyInfoInputs.cache
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\ValiantXP.Infrastructure.AssemblyInfo.cs
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\ValiantXP.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\ValiantXP.Infrastructure.sourcelink.json
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\ValiantX.95DEBA3C.Up2Date
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\ValiantXP.Infrastructure.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Infrastructure\obj\Debug\net8.0\refint\ValiantXP.Infrastructure.dll

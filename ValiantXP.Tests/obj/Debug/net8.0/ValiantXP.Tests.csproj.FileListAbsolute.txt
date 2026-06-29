@@ -15,6 +15,9 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Vali
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\ValiantXP.Tests.pdb
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\BCrypt-Net-Next.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Castle.Core.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\FluentAssertions.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
@@ -54,8 +57,10 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Micr
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Microsoft.TestPlatform.Utilities.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.Common.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Moq.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\NuGet.Frameworks.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Otp.NET.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -164,11 +169,10 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\Vali
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.AssemblyInfoInputs.cache
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.AssemblyInfo.cs
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.csproj.CoreCompileInputs.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.sourcelink.json
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantX.44EC5199.Up2Date
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\refint\ValiantXP.Tests.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.pdb
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ValiantXP.Tests.genruntimeconfig.cache
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\obj\Debug\net8.0\ref\ValiantXP.Tests.dll
-C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\BCrypt-Net-Next.dll
-C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Tests\bin\Debug\net8.0\Otp.NET.dll

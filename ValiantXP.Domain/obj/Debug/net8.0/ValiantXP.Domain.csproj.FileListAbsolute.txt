@@ -5,6 +5,7 @@ C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\Val
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\ValiantXP.Domain.AssemblyInfoInputs.cache
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\ValiantXP.Domain.AssemblyInfo.cs
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\ValiantXP.Domain.csproj.CoreCompileInputs.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\ValiantXP.Domain.sourcelink.json
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\ValiantXP.Domain.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\refint\ValiantXP.Domain.dll
 C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Domain\obj\Debug\net8.0\ValiantXP.Domain.pdb
