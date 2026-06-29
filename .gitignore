@@ -1,0 +1,20 @@
+## Ignore Visual Studio temporary files, build results, and user files
+[Ob]obj/
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.userosscache
+*.sln.docstates
+
+## Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+## Ignore Docker compose override files or secrets if any
+docker-compose.override.yml
+*.user
+
+## dotnet publish output
+publish-folder/
+out/

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: valiantxp-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=ValiantXP_DbPassword_2026
+    ports:
+      - "1433:1433"
+
+  api:
+    image: valiantxp-api
+    container_name: valiantxp-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ValiantXPDb;User Id=sa;Password=ValiantXP_DbPassword_2026;TrustServerCertificate=True;
+    depends_on:
+      - db

@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System;
 using System.Threading.Tasks;
 using ValiantXP.Application.DTOs;
@@ -20,6 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("otp/request")]
+    [EnableRateLimiting("OtpPolicy")]
     public async Task<IActionResult> RequestOtp([FromBody] RequestOtpRequestDto dto)
     {
         if (!Enum.TryParse<OtpChannel>(dto.Channel, true, out var channel))
@@ -39,6 +41,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("otp/verify")]
+    [EnableRateLimiting("OtpPolicy")]
     public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestDto dto)
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
