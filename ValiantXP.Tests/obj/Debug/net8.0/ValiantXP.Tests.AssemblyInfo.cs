@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ValiantXP.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a241a8b33b6eebfdd240224e93dbeee9caa2bd23")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+54282a797f0a741b112747b2a3b00fa74bf399f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("ValiantXP.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ValiantXP.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
