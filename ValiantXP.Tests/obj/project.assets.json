@@ -9688,11 +9688,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Tests\\ValiantXP.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Tests\\ValiantXP.Tests.csproj",
       "projectName": "ValiantXP.Tests",
-      "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Tests\\ValiantXP.Tests.csproj",
+      "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Tests\\ValiantXP.Tests.csproj",
       "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Tests\\obj\\",
+      "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -9709,17 +9709,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj": {
-              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj"
+            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj": {
+              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj"
             },
-            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
-              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
+            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
+              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
             },
-            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
-              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj"
+            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
+              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj"
             },
-            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {
-              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj"
+            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj"
             }
           }
         }
