@@ -9,13 +9,13 @@ using Xunit;
 
 namespace ValiantXP.Tests.Features.Dynamics;
 
-public class EncuestaStrategyTests
+public class SurveyStrategyTests
 {
-    private readonly EncuestaStrategy _strategy;
+    private readonly SurveyStrategy _strategy;
 
-    public EncuestaStrategyTests()
+    public SurveyStrategyTests()
     {
-        _strategy = new EncuestaStrategy();
+        _strategy = new SurveyStrategy();
     }
 
     [Fact]

@@ -79,7 +79,7 @@ public class ChainingIntegrationTests
             Id = challengeId,
             CampaignId = campaignId,
             IsActive = true,
-            Type = DynamicType.Codigo,
+            Type = DynamicType.Code,
             NextChallengeId = nextChallengeId // chain set
         };
 
@@ -230,7 +230,7 @@ public class ChainingIntegrationTests
             Id = challengeId,
             CampaignId = campaignId,
             IsActive = true,
-            Type = DynamicType.Codigo,
+            Type = DynamicType.Code,
             NextChallengeId = nextChallengeId
         };
 

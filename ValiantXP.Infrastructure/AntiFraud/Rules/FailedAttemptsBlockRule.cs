@@ -18,14 +18,14 @@ namespace ValiantXP.Infrastructure.AntiFraud.Rules;
 public sealed class FailedAttemptsBlockRule : IAntiFraudRule
 {
     private readonly ApplicationDbContext _context;
-    public DynamicType? ApplicableType => DynamicType.Codigo;
+    public DynamicType? ApplicableType => DynamicType.Code;
     public int Order => 50;
 
     public FailedAttemptsBlockRule(ApplicationDbContext context) => _context = context;
 
     public async Task ValidateAsync(AntiFraudContext context, CancellationToken cancellationToken)
     {
-        var cfg = context.Config.Codigo;
+        var cfg = context.Config.Code;
         if (!cfg.TrackFailedAttempts || cfg.MaxFailedAttemptsBeforeBlock <= 0) return;
 
         var windowStart = DateTime.UtcNow.AddMinutes(-cfg.FailedAttemptWindowMinutes);

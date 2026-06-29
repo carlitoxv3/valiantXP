@@ -18,14 +18,14 @@ namespace ValiantXP.Infrastructure.AntiFraud.Rules;
 public sealed class MaxAttemptsPerIpRule : IAntiFraudRule
 {
     private readonly ApplicationDbContext _context;
-    public DynamicType? ApplicableType => DynamicType.Codigo;
+    public DynamicType? ApplicableType => DynamicType.Code;
     public int Order => 40;
 
     public MaxAttemptsPerIpRule(ApplicationDbContext context) => _context = context;
 
     public async Task ValidateAsync(AntiFraudContext context, CancellationToken cancellationToken)
     {
-        var limit = context.Config.Codigo.MaxAttemptsPerIpPerHour;
+        var limit = context.Config.Code.MaxAttemptsPerIpPerHour;
         if (limit <= 0 || string.IsNullOrWhiteSpace(context.RemoteIp)) return;
 
         var windowStart = DateTime.UtcNow.AddHours(-1);

@@ -15,7 +15,7 @@ namespace ValiantXP.Infrastructure.AntiFraud.Rules;
 public sealed class CodeNotUsedRule : IAntiFraudRule
 {
     private readonly IUnitOfWork _unitOfWork;
-    public DynamicType? ApplicableType => DynamicType.Codigo;
+    public DynamicType? ApplicableType => DynamicType.Code;
     public int Order => 20;
 
     public CodeNotUsedRule(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;

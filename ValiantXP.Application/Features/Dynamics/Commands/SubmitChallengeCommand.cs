@@ -191,7 +191,7 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
     private static bool ShouldTrackFailedAttempt(DynamicType type, AntiFraudCampaignConfig cfg) =>
         type switch
         {
-            DynamicType.Codigo => cfg.Codigo.TrackFailedAttempts,
+            DynamicType.Code => cfg.Code.TrackFailedAttempts,
             _ => false // Trivia and Encuesta don't track failed attempts by default
         };
 

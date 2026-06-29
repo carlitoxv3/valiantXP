@@ -2,7 +2,7 @@ namespace ValiantXP.Domain.AntiFraud;
 
 /// <summary>
 /// Per-campaign anti-fraud configuration stored as JSON in DynamicChallenge.AntiFraudConfigJson.
-/// Each module (Codigo, Trivia, Encuesta) has its own nested config section.
+/// Each module (Code, Trivia, Survey) has its own nested config section.
 /// A null module config means the module uses its hardcoded defaults.
 /// </summary>
 public class AntiFraudCampaignConfig
@@ -17,22 +17,22 @@ public class AntiFraudCampaignConfig
 
     // ─── Module-specific configs ──────────────────────────────────────────────
 
-    /// <summary>Anti-fraud rules specific to the Codigo (promo code) dynamic.</summary>
-    public CodigoAntiFraudConfig Codigo { get; set; } = new();
+    /// <summary>Anti-fraud rules specific to the Code (promo code) dynamic.</summary>
+    public CodeAntiFraudConfig Code { get; set; } = new();
 
     /// <summary>Anti-fraud rules specific to the Trivia dynamic.</summary>
     public TriviaAntiFraudConfig Trivia { get; set; } = new();
 
-    /// <summary>Anti-fraud rules specific to the Encuesta (survey) dynamic.</summary>
-    public EncuestaAntiFraudConfig Encuesta { get; set; } = new();
+    /// <summary>Anti-fraud rules specific to the Survey dynamic.</summary>
+    public SurveyAntiFraudConfig Survey { get; set; } = new();
 }
 
 /// <summary>
-/// Anti-fraud configuration for the Codigo (promo code redemption) dynamic.
+/// Anti-fraud configuration for the Code (promo code redemption) dynamic.
 /// Mirrors the validations performed by PromoHub's dbo.ExchangeCode and
 /// dbo.ValidateExchangeCode stored procedures.
 /// </summary>
-public class CodigoAntiFraudConfig
+public class CodeAntiFraudConfig
 {
     // ── Redemption limits ──
 
@@ -107,9 +107,9 @@ public class TriviaAntiFraudConfig
 }
 
 /// <summary>
-/// Anti-fraud configuration for the Encuesta (survey) dynamic.
+/// Anti-fraud configuration for the Survey dynamic.
 /// </summary>
-public class EncuestaAntiFraudConfig
+public class SurveyAntiFraudConfig
 {
     /// <summary>
     /// Whether a user can only submit this survey once.

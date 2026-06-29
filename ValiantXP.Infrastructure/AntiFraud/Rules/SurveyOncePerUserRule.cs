@@ -16,14 +16,14 @@ namespace ValiantXP.Infrastructure.AntiFraud.Rules;
 public sealed class SurveyOncePerUserRule : IAntiFraudRule
 {
     private readonly ApplicationDbContext _context;
-    public DynamicType? ApplicableType => DynamicType.Encuesta;
+    public DynamicType? ApplicableType => DynamicType.Survey;
     public int Order => 30;
 
     public SurveyOncePerUserRule(ApplicationDbContext context) => _context = context;
 
     public async Task ValidateAsync(AntiFraudContext context, CancellationToken cancellationToken)
     {
-        if (!context.Config.Encuesta.OncePerUser) return;
+        if (!context.Config.Survey.OncePerUser) return;
 
         var alreadyAnswered = await _context.UserChallengeProgresses
             .AnyAsync(p =>

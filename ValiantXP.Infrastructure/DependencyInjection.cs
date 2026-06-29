@@ -70,8 +70,8 @@ public static class DependencyInjection
 
         // Dynamics Engine
         services.AddScoped<IDynamicStrategy, TriviaStrategy>();
-        services.AddScoped<IDynamicStrategy, EncuestaStrategy>();
-        services.AddScoped<IDynamicStrategy, CodigoStrategy>();
+        services.AddScoped<IDynamicStrategy, SurveyStrategy>();
+        services.AddScoped<IDynamicStrategy, CodeStrategy>();
         services.AddScoped<IDynamicService, DynamicService>();
 
         return services;

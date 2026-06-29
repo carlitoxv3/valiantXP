@@ -14,7 +14,7 @@ namespace ValiantXP.Tests.AntiFraud;
 
 public class AntiFraudPipelineTests
 {
-    private static AntiFraudContext BuildContext(DynamicType type = DynamicType.Codigo) => new()
+    private static AntiFraudContext BuildContext(DynamicType type = DynamicType.Code) => new()
     {
         UserId = Guid.NewGuid(),
         ChallengeId = Guid.NewGuid(),
@@ -82,7 +82,7 @@ public class AntiFraudPipelineTests
         var pipeline = new AntiFraudPipeline(new[] { triviaRule.Object });
 
         // Context is Codigo — Trivia rule should be skipped, no exception
-        var act = async () => await pipeline.RunAsync(BuildContext(DynamicType.Codigo), CancellationToken.None);
+        var act = async () => await pipeline.RunAsync(BuildContext(DynamicType.Code), CancellationToken.None);
         await act.Should().NotThrowAsync();
 
         triviaRule.Verify(

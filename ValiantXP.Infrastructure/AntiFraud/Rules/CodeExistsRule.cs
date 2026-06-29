@@ -15,7 +15,7 @@ namespace ValiantXP.Infrastructure.AntiFraud.Rules;
 public sealed class CodeExistsRule : IAntiFraudRule
 {
     private readonly IUnitOfWork _unitOfWork;
-    public DynamicType? ApplicableType => DynamicType.Codigo;
+    public DynamicType? ApplicableType => DynamicType.Code;
     public int Order => 10;
 
     public CodeExistsRule(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;

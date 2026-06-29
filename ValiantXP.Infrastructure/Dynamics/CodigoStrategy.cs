@@ -7,16 +7,22 @@ using ValiantXP.Domain.Interfaces;
 
 namespace ValiantXP.Infrastructure.Dynamics;
 
-public class CodigoStrategy : IDynamicStrategy
+/// <summary>
+/// Strategy for the Code (promo code redemption) dynamic.
+/// Validates the submitted code exists and has not been redeemed,
+/// then marks it as used atomically. Prize assignment is delegated
+/// to ChallengeCompletedEvent (PromoHub pattern).
+/// </summary>
+public class CodeStrategy : IDynamicStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public CodigoStrategy(IUnitOfWork unitOfWork)
+    public CodeStrategy(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
 
-    public string DynamicType => Domain.Enums.DynamicType.Codigo.ToString();
+    public string DynamicType => Domain.Enums.DynamicType.Code.ToString();
 
     public async Task<DynamicResult> ExecuteAsync(DynamicContext context, CancellationToken cancellationToken)
     {

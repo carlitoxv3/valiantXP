@@ -11,18 +11,18 @@ using Xunit;
 
 namespace ValiantXP.Tests.Features.Dynamics;
 
-public class CodigoStrategyTests
+public class CodeStrategyTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICodeRepository> _mockCodeRepo;
-    private readonly CodigoStrategy _strategy;
+    private readonly CodeStrategy _strategy;
 
-    public CodigoStrategyTests()
+    public CodeStrategyTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCodeRepo = new Mock<ICodeRepository>();
         _mockUnitOfWork.Setup(u => u.Codes).Returns(_mockCodeRepo.Object);
-        _strategy = new CodigoStrategy(_mockUnitOfWork.Object);
+        _strategy = new CodeStrategy(_mockUnitOfWork.Object);
     }
 
     [Fact]
@@ -161,12 +161,10 @@ public class CodigoStrategyTests
         result.Message.Should().Contain("VALID-CODE-001");
         result.Message.Should().Contain("successfully redeemed");
 
-        // Verify the code was marked as used
         validCode.UsedAt.Should().NotBeNull();
         validCode.UsedAt.Should().BeOnOrAfter(beforeCall);
         validCode.UserId.Should().Be(userId);
 
-        // Verify payload contains code details
         var payload = result.Payload as Dictionary<string, object>;
         payload.Should().NotBeNull();
         payload!["CodeNumber"].Should().Be("VALID-CODE-001");

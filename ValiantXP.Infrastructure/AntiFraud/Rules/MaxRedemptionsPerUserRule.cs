@@ -19,14 +19,14 @@ namespace ValiantXP.Infrastructure.AntiFraud.Rules;
 public sealed class MaxRedemptionsPerUserRule : IAntiFraudRule
 {
     private readonly ApplicationDbContext _context;
-    public DynamicType? ApplicableType => DynamicType.Codigo;
+    public DynamicType? ApplicableType => DynamicType.Code;
     public int Order => 30;
 
     public MaxRedemptionsPerUserRule(ApplicationDbContext context) => _context = context;
 
     public async Task ValidateAsync(AntiFraudContext context, CancellationToken cancellationToken)
     {
-        var limit = context.Config.Codigo.MaxRedemptionsPerUserPerDay;
+        var limit = context.Config.Code.MaxRedemptionsPerUserPerDay;
         if (limit <= 0) return; // 0 = unlimited
 
         var todayUtc = DateTime.UtcNow.Date;
