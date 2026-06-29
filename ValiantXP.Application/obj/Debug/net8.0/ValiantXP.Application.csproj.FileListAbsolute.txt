@@ -1,0 +1,15 @@
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\bin\Debug\net8.0\ValiantXP.Application.deps.json
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\bin\Debug\net8.0\ValiantXP.Application.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\bin\Debug\net8.0\ValiantXP.Application.pdb
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\bin\Debug\net8.0\ValiantXP.Domain.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\bin\Debug\net8.0\ValiantXP.Domain.pdb
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.csproj.AssemblyReference.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.AssemblyInfoInputs.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.AssemblyInfo.cs
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.csproj.CoreCompileInputs.cache
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantX.91A5228A.Up2Date
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\refint\ValiantXP.Application.dll
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ValiantXP.Application.pdb
+C:\Users\ag_dw\Documents\Massive\valiantXP\ValiantXP.Application\obj\Debug\net8.0\ref\ValiantXP.Application.dll
