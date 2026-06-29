@@ -16,4 +16,5 @@ public class UserChallengeProgress : Entity
     public int Attempts { get; set; }
     public int Score { get; set; }
     public DateTime? CompletedAt { get; set; }
+    public Guid? ReservedPrizeId { get; set; }
 }

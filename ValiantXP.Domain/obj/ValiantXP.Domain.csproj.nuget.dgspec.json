@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {}
+    "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
+    "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
+        "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
         "projectName": "ValiantXP.Domain",
-        "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
+        "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
         "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\obj\\",
+        "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",

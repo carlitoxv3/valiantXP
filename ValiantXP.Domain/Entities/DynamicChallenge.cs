@@ -14,6 +14,7 @@ public class DynamicChallenge : Entity
     public string Name { get; set; } = string.Empty;
     public string ConfigurationJson { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    public Guid? NextChallengeId { get; set; }
 
     public ICollection<Prize> Prizes { get; set; } = new List<Prize>();
     public ICollection<UserChallengeProgress> UserProgresses { get; set; } = new List<UserChallengeProgress>();

@@ -23,4 +23,5 @@ public class ChallengeResultDto
     public string Message { get; set; } = string.Empty;
     public object? Payload { get; set; }
     public List<string> AwardedPrizeNames { get; set; } = new();
+    public Guid? NextChallengeId { get; set; }
 }

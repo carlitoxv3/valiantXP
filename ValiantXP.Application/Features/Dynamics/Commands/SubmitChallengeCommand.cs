@@ -135,7 +135,8 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
             Success = dynamicResult.Success,
             Message = dynamicResult.Message,
             Payload = dynamicResult.Payload,
-            AwardedPrizeNames = awardedPrizeNames
+            AwardedPrizeNames = awardedPrizeNames,
+            NextChallengeId = dynamicResult.Success ? challenge.NextChallengeId : null
         };
 
         return Result<ChallengeResultDto>.Success(resultDto);

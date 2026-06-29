@@ -21,6 +21,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserChallengeProgress> UserChallengeProgresses => Set<UserChallengeProgress>();
     public DbSet<Prize> Prizes => Set<Prize>();
     public DbSet<UserPrize> UserPrizes => Set<UserPrize>();
+    public DbSet<Code> Codes => Set<Code>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

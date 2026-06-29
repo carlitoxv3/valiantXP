@@ -17,6 +17,7 @@ public class UnitOfWork : IUnitOfWork
     private IUserChallengeProgressRepository? _userChallengeProgresses;
     private IPrizeRepository? _prizes;
     private IUserPrizeRepository? _userPrizes;
+    private ICodeRepository? _codes;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -31,6 +32,7 @@ public class UnitOfWork : IUnitOfWork
     public IUserChallengeProgressRepository UserChallengeProgresses => _userChallengeProgresses ??= new UserChallengeProgressRepository(_context);
     public IPrizeRepository Prizes => _prizes ??= new PrizeRepository(_context);
     public IUserPrizeRepository UserPrizes => _userPrizes ??= new UserPrizeRepository(_context);
+    public ICodeRepository Codes => _codes ??= new CodeRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

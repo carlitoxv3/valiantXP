@@ -5315,11 +5315,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj",
+      "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj",
       "projectName": "ValiantXP.API",
-      "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj",
+      "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\ValiantXP.API.csproj",
       "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\obj\\",
+      "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -5336,11 +5336,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
-              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
+            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
+              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
             },
-            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj"
+            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {
+              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj"
             }
           }
         }

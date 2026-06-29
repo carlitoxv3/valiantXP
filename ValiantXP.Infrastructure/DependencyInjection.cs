@@ -46,9 +46,12 @@ public static class DependencyInjection
         services.AddScoped<IEmailOtpSender, EmailOtpSender>();
         services.AddScoped<IWhatsAppOtpSender, WhatsAppOtpSender>();
 
+        services.AddScoped<ICodeRepository, CodeRepository>();
+
         // Dynamics Engine
         services.AddScoped<IDynamicStrategy, TriviaStrategy>();
         services.AddScoped<IDynamicStrategy, EncuestaStrategy>();
+        services.AddScoped<IDynamicStrategy, CodigoStrategy>();
         services.AddScoped<IDynamicService, DynamicService>();
 
         return services;
