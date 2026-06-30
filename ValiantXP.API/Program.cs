@@ -81,3 +81,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Expose Program class to WebApplicationFactory in test projects
+public partial class Program { }
