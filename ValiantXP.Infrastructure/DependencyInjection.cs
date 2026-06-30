@@ -52,10 +52,14 @@ public static class DependencyInjection
         services.AddScoped<ICodeRepository, CodeRepository>();
         services.AddScoped<IFailedAttemptRepository, FailedAttemptRepository>();
 
+        // Rally repositories
+        services.AddScoped<IRallySubmissionRepository, RallySubmissionRepository>();
+        services.AddScoped<IRallySubmissionVoteRepository, RallySubmissionVoteRepository>();
+
         // Anti-fraud pipeline — rules registered in execution order
         // CampaignActiveWindowRule (Order 5)  — all dynamics
         services.AddScoped<IAntiFraudRule, CampaignActiveWindowRule>();
-        // Codigo rules
+        // Code rules
         services.AddScoped<IAntiFraudRule, CodeExistsRule>();           // Order 10
         services.AddScoped<IAntiFraudRule, CodeNotUsedRule>();          // Order 20
         services.AddScoped<IAntiFraudRule, MaxRedemptionsPerUserRule>(); // Order 30
@@ -63,8 +67,11 @@ public static class DependencyInjection
         services.AddScoped<IAntiFraudRule, FailedAttemptsBlockRule>();  // Order 50
         // Trivia rules
         services.AddScoped<IAntiFraudRule, MaxTriviaAttemptsRule>();    // Order 30
-        // Encuesta rules
+        // Survey rules
         services.AddScoped<IAntiFraudRule, SurveyOncePerUserRule>();    // Order 30
+        // Rally rules
+        services.AddScoped<IAntiFraudRule, RallySubmissionLimitRule>(); // Order 30
+        services.AddScoped<IAntiFraudRule, RallyTicketUniquenessRule>(); // Order 40
         // Pipeline orchestrator
         services.AddScoped<IAntiFraudPipeline, AntiFraudPipeline>();
 
@@ -72,6 +79,7 @@ public static class DependencyInjection
         services.AddScoped<IDynamicStrategy, TriviaStrategy>();
         services.AddScoped<IDynamicStrategy, SurveyStrategy>();
         services.AddScoped<IDynamicStrategy, CodeStrategy>();
+        services.AddScoped<IDynamicStrategy, RallyStrategy>();
         services.AddScoped<IDynamicService, DynamicService>();
 
         return services;

@@ -42,4 +42,12 @@ public sealed class AntiFraudException : Exception
 
     public static AntiFraudException CampaignNotActive() =>
         new("CAMPAIGN_NOT_ACTIVE", "This campaign is not currently active.");
+
+    public static AntiFraudException RallySubmissionLimitExceeded(int limit, int periodHours) =>
+        new("RALLY_SUBMISSION_LIMIT",
+            $"You have reached the maximum of {limit} submission(s) allowed every {periodHours} hour(s) for this Rally.");
+
+    public static AntiFraudException RallyDuplicateTicket(string ticketNumber) =>
+        new("RALLY_DUPLICATE_TICKET",
+            $"Ticket number '{ticketNumber}' has already been submitted for this Rally.");
 }

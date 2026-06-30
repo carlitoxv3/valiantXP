@@ -23,6 +23,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserPrize> UserPrizes => Set<UserPrize>();
     public DbSet<Code> Codes => Set<Code>();
     public DbSet<FailedAttempt> FailedAttempts => Set<FailedAttempt>();
+    public DbSet<RallySubmission> RallySubmissions => Set<RallySubmission>();
+    public DbSet<RallySubmissionVote> RallySubmissionVotes => Set<RallySubmissionVote>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

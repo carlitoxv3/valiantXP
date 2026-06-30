@@ -2,7 +2,7 @@ namespace ValiantXP.Domain.AntiFraud;
 
 /// <summary>
 /// Per-campaign anti-fraud configuration stored as JSON in DynamicChallenge.AntiFraudConfigJson.
-/// Each module (Code, Trivia, Survey) has its own nested config section.
+/// Each module (Code, Trivia, Survey, Rally) has its own nested config section.
 /// A null module config means the module uses its hardcoded defaults.
 /// </summary>
 public class AntiFraudCampaignConfig
@@ -25,7 +25,11 @@ public class AntiFraudCampaignConfig
 
     /// <summary>Anti-fraud rules specific to the Survey dynamic.</summary>
     public SurveyAntiFraudConfig Survey { get; set; } = new();
+
+    /// <summary>Anti-fraud rules specific to the Rally (UGC competition) dynamic.</summary>
+    public RallyAntiFraudConfig Rally { get; set; } = new();
 }
+
 
 /// <summary>
 /// Anti-fraud configuration for the Code (promo code redemption) dynamic.
@@ -106,9 +110,7 @@ public class TriviaAntiFraudConfig
     public int MaxIpAttemptsPerHour { get; set; } = 10;
 }
 
-/// <summary>
-/// Anti-fraud configuration for the Survey dynamic.
-/// </summary>
+/// <summary>Anti-fraud configuration for the Survey dynamic.</summary>
 public class SurveyAntiFraudConfig
 {
     /// <summary>
@@ -125,4 +127,63 @@ public class SurveyAntiFraudConfig
 
     /// <summary>Max survey submissions from the same IP when EnforceIpUniqueness is true.</summary>
     public int MaxSubmissionsPerIp { get; set; } = 1;
+}
+
+/// <summary>
+/// Anti-fraud configuration for the Rally (UGC competition) dynamic.
+/// Mirrors PromoHub's RallyMultimediaValidation chain (MaxUploadDaily, MaxUpload, MaxUploadPeriod, MaxUploadWeekly).
+/// </summary>
+public class RallyAntiFraudConfig
+{
+    // ── Submission frequency limits ──
+
+    /// <summary>
+    /// Maximum number of accepted submissions per user within PeriodHours.
+    /// Mirrors PromoHub's RallyMultimediaMaxUploadDaily(waitTime, maxDailyUpload).
+    /// 0 = unlimited.
+    /// </summary>
+    public int MaxSubmissionsPerUserPerPeriod { get; set; } = 1;
+
+    /// <summary>
+    /// Rolling window in hours for MaxSubmissionsPerUserPerPeriod.
+    /// Default 24h = daily limit. Use 168h for a weekly limit.
+    /// </summary>
+    public int PeriodHours { get; set; } = 24;
+
+    // ── Ticket/Consumo type controls ──
+
+    /// <summary>
+    /// Maximum number of valid tickets accepted across ALL users in a single calendar day.
+    /// Mirrors PromoHub's DailyTicketCounter for Colgate MX positional prize logic.
+    /// 0 = unlimited.
+    /// </summary>
+    public int MaxDailyTicketsPerRally { get; set; } = 0;
+
+    /// <summary>
+    /// When true, the same NroTicket cannot be submitted more than once in a Rally.
+    /// Mirrors PromoHub's ValidateTicketVendor SP.
+    /// Applies only to Ticket and Consumption rally types.
+    /// </summary>
+    public bool RequireUniqueTicketNumber { get; set; } = true;
+
+    // ── Voting controls ──
+
+    /// <summary>
+    /// Maximum number of votes a single user may cast per calendar day across all submissions in this challenge.
+    /// 0 = unlimited.
+    /// </summary>
+    public int MaxVotesPerUserPerDay { get; set; } = 5;
+
+    // ── Winner selection ──
+
+    /// <summary>
+    /// How winners are determined when SelectRallyWinnersCommand is executed.
+    /// Corresponds to WinnerSelectionMode enum values.
+    /// </summary>
+    public string WinnerSelectionMode { get; set; } = "ByAdmin";
+
+    /// <summary>
+    /// Number of winners to select when winner selection runs.
+    /// </summary>
+    public int NumberOfWinners { get; set; } = 1;
 }

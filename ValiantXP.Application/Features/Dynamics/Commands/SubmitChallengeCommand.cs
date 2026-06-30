@@ -110,8 +110,17 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
             && scoreVal is int dictScore)
             score = dictScore;
 
+        // Rally submissions are async — the challenge stays Pending until a winner is selected.
+        // Detect Rally by the typed payload marker returned by RallyStrategy.
+        bool isRallySubmission = dynamicResult.Payload is RallySubmissionPayload;
+
         // 8. Update or create user progress
         var now = DateTime.UtcNow;
+        // For Rally, status = Pending (not Completed) — prize fires on winner selection.
+        var progressStatus = isRallySubmission
+            ? ChallengeStatus.Pending
+            : (dynamicResult.Success ? ChallengeStatus.Completed : ChallengeStatus.Failed);
+
         if (progress == null)
         {
             progress = new UserChallengeProgress
@@ -121,8 +130,8 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
                 DynamicChallengeId = request.ChallengeId,
                 Attempts = 1,
                 Score = score,
-                Status = dynamicResult.Success ? ChallengeStatus.Completed : ChallengeStatus.Failed,
-                CompletedAt = dynamicResult.Success ? now : null
+                Status = progressStatus,
+                CompletedAt = (!isRallySubmission && dynamicResult.Success) ? now : null
             };
             await _unitOfWork.UserChallengeProgresses.AddAsync(progress, cancellationToken);
         }
@@ -130,15 +139,16 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
         {
             progress.Attempts++;
             progress.Score = score;
-            progress.Status = dynamicResult.Success ? ChallengeStatus.Completed : ChallengeStatus.Failed;
-            progress.CompletedAt = dynamicResult.Success ? now : null;
+            progress.Status = progressStatus;
+            progress.CompletedAt = (!isRallySubmission && dynamicResult.Success) ? now : null;
             await _unitOfWork.UserChallengeProgresses.UpdateAsync(progress, cancellationToken);
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        // 9. If completed, publish Domain Event → InstantWin handler
-        if (dynamicResult.Success)
+        // 9. Publish ChallengeCompletedEvent ONLY for sync dynamics (Trivia, Survey, Code).
+        //    Rally fires this event later via RallyWinnerSelectedEventHandler.
+        if (dynamicResult.Success && !isRallySubmission)
         {
             var completedEvent = new ChallengeCompletedEvent(request.UserId, request.ChallengeId, progress.Id);
             await _publisher.Publish(completedEvent, cancellationToken);
