@@ -109,4 +109,19 @@ public sealed class RallySubmissionRepository : IRallySubmissionRepository
             .Include(s => s.User)
             .ToListAsync(ct);
     }
+
+    /// <summary>
+    /// All submissions by a specific user in a challenge (all statuses).
+    /// Mirrors PromoHub's GetMultimediaByProfileIdRallyId.
+    /// Used for: my-submissions view, sub-challenge availability check.
+    /// </summary>
+    public async Task<IList<RallySubmission>> GetByUserAsync(
+        Guid userId, Guid challengeId, CancellationToken ct = default)
+    {
+        return await _db.RallySubmissions
+            .Where(s => s.UserId == userId && s.DynamicChallengeId == challengeId)
+            .Include(s => s.Votes)
+            .OrderByDescending(s => s.SubmittedAt)
+            .ToListAsync(ct);
+    }
 }

@@ -3,7 +3,7 @@ using ValiantXP.Domain.Entities;
 using ValiantXP.Domain.Events;
 using ValiantXP.Domain.Interfaces;
 
-namespace ValiantXP.Application.Features.Rally.EventHandlers;
+namespace ValiantXP.Application.Features.Dynamics.Rally.EventHandlers;
 
 /// <summary>
 /// Handles RallyWinnerSelectedEvent by triggering prize assignment for each winner
@@ -69,3 +69,4 @@ public sealed class RallyWinnerSelectedEventHandler : INotificationHandler<Rally
         }
     }
 }
+

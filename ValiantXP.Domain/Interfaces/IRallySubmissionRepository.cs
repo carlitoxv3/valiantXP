@@ -42,4 +42,11 @@ public interface IRallySubmissionRepository
 
     /// <summary>Returns all winner submissions for a challenge.</summary>
     Task<IList<RallySubmission>> GetWinnersAsync(Guid challengeId, CancellationToken ct = default);
+
+    /// <summary>
+    /// All submissions by a specific user for a challenge (all statuses).
+    /// Used for the 'My Submissions' view and sub-challenge availability check.
+    /// Mirrors PromoHub's GetMultimediaByProfileIdRallyId.
+    /// </summary>
+    Task<IList<RallySubmission>> GetByUserAsync(Guid userId, Guid challengeId, CancellationToken ct = default);
 }

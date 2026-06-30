@@ -90,3 +90,78 @@ public sealed class WinnerSelectionResultDto
     public IList<string> WinnerCodes { get; init; } = new List<string>();
     public string Message { get; init; } = string.Empty;
 }
+
+// ─── Rally info (GET /api/rally/{id}) ────────────────────────────────────────
+
+/// <summary>
+/// Rally challenge metadata + live stats.
+/// Combines PromoHub's /rally/active + /rally/get?id into one response.
+/// </summary>
+public sealed class RallyInfoDto
+{
+    public Guid ChallengeId { get; init; }
+    public Guid CampaignId { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string RallyType { get; init; } = string.Empty;
+    public bool IsActive { get; init; }
+    public DateTime? CampaignStartDate { get; init; }
+    public DateTime? CampaignEndDate { get; init; }
+    public int TotalApproved { get; init; }
+    public int TotalWinners { get; init; }
+    public bool HasWinners { get; init; }
+    /// <summary>Raw ConfigurationJson for client-side rendering (sub-challenges, etc.).</summary>
+    public string? ConfigurationJson { get; init; }
+}
+
+// ─── Moderation item detail (admin) ──────────────────────────────────────────
+
+/// <summary>
+/// Full detail of a single Rally submission for admin moderation review.
+/// Includes ticket data and moderation audit trail.
+/// Mirrors PromoHub Admin's GET /multimedia/moderation/{id}.
+/// </summary>
+public sealed class RallyModerationItemDto
+{
+    public Guid Id { get; init; }
+    public string SubmissionCode { get; init; } = string.Empty;
+    public string Status { get; init; } = string.Empty;
+    public string RallyType { get; init; } = string.Empty;
+    public Guid UserId { get; init; }
+    public string? MediaUrl { get; init; }
+    public string? TextContent { get; init; }
+    /// <summary>JSON with ticket number, point of sale, line items (for Ticket-type rallies).</summary>
+    public string? TicketDataJson { get; init; }
+    public string? SubChallengeTag { get; init; }
+    public int VoteCount { get; init; }
+    public DateTime SubmittedAt { get; init; }
+    public DateTime? ModeratedAt { get; init; }
+    public Guid? ModeratedByUserId { get; init; }
+    public string? ModerationNotes { get; init; }
+    public string? RemoteIp { get; init; }
+}
+
+// ─── Pre-validate access ─────────────────────────────────────────────────────
+
+/// <summary>
+/// Response from POST /api/rally/{id}/validate.
+/// Tells the client if the user can submit, how many submissions remain,
+/// and which sub-challenge they should complete next.
+/// Mirrors PromoHub's /rallies/validate (Chatbot) and /rally/{id}/validate (User API).
+/// </summary>
+public sealed class RallyAccessValidationDto
+{
+    public bool CanSubmit { get; init; }
+    /// <summary>Null = unlimited. Number of remaining submissions in the current period.</summary>
+    public int? RemainingSubmissions { get; init; }
+    public int PeriodHours { get; init; }
+    public SubChallengeDto? AvailableSubChallenge { get; init; }
+    public string Message { get; init; } = string.Empty;
+}
+
+/// <summary>A single sub-challenge definition returned during Rally validation.</summary>
+public sealed class SubChallengeDto
+{
+    public int Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+}

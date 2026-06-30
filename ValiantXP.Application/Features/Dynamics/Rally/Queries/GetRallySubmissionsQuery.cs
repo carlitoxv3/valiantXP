@@ -4,7 +4,7 @@ using ValiantXP.Application.DTOs;
 using ValiantXP.Domain.Entities;
 using ValiantXP.Domain.Interfaces;
 
-namespace ValiantXP.Application.Features.Rally.Queries;
+namespace ValiantXP.Application.Features.Dynamics.Rally.Queries;
 
 /// <summary>
 /// Returns the approved submissions gallery for a Rally challenge.
@@ -64,3 +64,4 @@ public sealed class GetRallySubmissionsQueryHandler
         return Result<IList<RallySubmissionDto>>.Success(dtos);
     }
 }
+

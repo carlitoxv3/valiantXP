@@ -5,7 +5,7 @@ using ValiantXP.Domain.Enums;
 using ValiantXP.Domain.Events;
 using ValiantXP.Domain.Interfaces;
 
-namespace ValiantXP.Application.Features.Rally.Commands;
+namespace ValiantXP.Application.Features.Dynamics.Rally.Commands;
 
 /// <summary>
 /// Moderates a Rally submission (admin action).
@@ -84,3 +84,4 @@ public sealed class ModerateRallySubmissionCommandHandler
         });
     }
 }
+

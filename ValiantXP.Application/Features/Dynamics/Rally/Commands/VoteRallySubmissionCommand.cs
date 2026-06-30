@@ -5,7 +5,7 @@ using ValiantXP.Domain.Entities;
 using ValiantXP.Domain.Exceptions;
 using ValiantXP.Domain.Interfaces;
 
-namespace ValiantXP.Application.Features.Rally.Commands;
+namespace ValiantXP.Application.Features.Dynamics.Rally.Commands;
 
 /// <summary>
 /// Casts a community vote on an approved Rally submission.
@@ -90,3 +90,4 @@ public sealed class VoteRallySubmissionCommandHandler
         });
     }
 }
+
