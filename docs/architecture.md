@@ -1,60 +1,141 @@
-﻿# Arquitectura del Sistema - ValiantXP
+# ValiantXP Architecture
 
-Este documento detalla la estructura y directrices de diseño arquitectónico para ValiantXP, utilizando una aproximación de **Clean Architecture** (Arquitectura Limpia) con .NET 8, patrón CQRS mediante MediatR, y autenticación JWT personalizada.
+## Overview
 
----
-
-## 1. Estructura de Proyectos y Namespaces
-
-La solución está organizada en cuatro capas concéntricas (Domain, Application, Infrastructure, API) más un proyecto de pruebas (Tests). Las dependencias fluyen siempre hacia el interior (hacia el Dominio).
-
-`mermaid
-graph TD
-    API[ValiantXP.API] --> Infrastructure[ValiantXP.Infrastructure]
-    API --> Application[ValiantXP.Application]
-    Infrastructure --> Application
-    Application --> Domain[ValiantXP.Domain]
-    Tests[ValiantXP.Tests] --> API
-    Tests --> Infrastructure
-    Tests --> Application
-    Tests --> Domain
-`
-
-### 1.1 ValiantXP.Domain
-Capa central que contiene las entidades de negocio, reglas de dominio y abstracciones base. No tiene dependencias externas ni de otras capas.
-* **ValiantXP.Domain.Entities**: Modelos de datos del dominio (ej. User, RefreshToken, OtpCode).
-* **ValiantXP.Domain.Enums**: Enumeraciones seguras (ej. OtpChannel).
-* **ValiantXP.Domain.Events**: Eventos de dominio disparados por cambios de estado.
-* **ValiantXP.Domain.Interfaces**: Contratos/interfaces de bajo nivel que definen el comportamiento requerido por el dominio (ej. IDynamicStrategy, IRepository<T>).
-
-### 1.2 ValiantXP.Application
-Capa de lógica de aplicación que implementa los casos de uso utilizando CQRS con MediatR.
-* **ValiantXP.Application.Common**:
-  * Exceptions: Excepciones de aplicación (ej. ValidationException).
-  * Interfaces: Contratos de servicios de aplicación y persistencia (ej. IApplicationDbContext, ITokenService).
-* **ValiantXP.Application.DTOs**: Objetos de transferencia de datos para peticiones y respuestas de API.
-* **ValiantXP.Application.Features**: Casos de uso estructurados por carpetas de características (Vertical Slices), agrupados por Commands, Queries, Handlers y Validators (usando FluentValidation).
-
-### 1.3 ValiantXP.Infrastructure
-Capa de implementación técnica que provee servicios de persistencia, integración y seguridad.
-* **ValiantXP.Infrastructure.Data**:
-  * ApplicationDbContext: Implementación de EF Core DbContext.
-  * Configurations: Mapeos de EF Core (Fluent API).
-* **ValiantXP.Infrastructure.Identity**:
-  * Implementación de generación y validación de tokens JWT.
-  * Lógica de MFA (TOTP con Otp.NET) y OTP.
-* **ValiantXP.Infrastructure.Repositories**: Implementaciones del repositorio genérico y específicos.
-
-### 1.4 ValiantXP.API
-Capa de presentación que expone la interfaz REST del sistema.
+ValiantXP is a gamification platform built on **.NET 8** using **Clean Architecture**. It provides a scalable engine for running promotional dynamics (Trivia, Surveys, Promo Codes) with passwordless authentication, an event-driven prize system, and a per-campaign anti-fraud pipeline.
 
 ---
 
-## 2. Flujo de Autenticación Passwordless y MFA
+## Solution Structure
 
-1.  **Solicitud de OTP (/api/auth/otp/request)**: El usuario proporciona su correo o teléfono y elige el canal (Email o WhatsApp). Se genera un código de 6 dígitos con expiración de 5 minutos.
-2.  **Verificación de OTP (/api/auth/otp/verify)**: El usuario envía el código recibido.
-    *   Si es válido y el usuario no existía, se crea en la base de datos (Registro automático).
-    *   Si el usuario tiene MFA habilitado (IsMfaEnabled == true), se retorna un estatus MfaRequired junto con un token de transacción temporal.
-    *   Si MFA no está habilitado, se emiten los tokens JWT Access y Refresh.
-3.  **Verificación de MFA (/api/auth/mfa/verify)**: El usuario envía el código de 6 dígitos generado en su aplicación de autenticación (Google Authenticator). Al ser válido, se emiten los tokens definitivos.
+```
+ValiantXP/
+├── ValiantXP.Domain/           # Enterprise Business Rules
+│   ├── Entities/               # Core entities (User, Campaign, DynamicChallenge, Code, FailedAttempt…)
+│   ├── Enums/                  # DynamicType (Trivia, Survey, Code), ChallengeStatus, OtpChannel
+│   ├── Interfaces/             # Repository contracts, IUnitOfWork, IDynamicStrategy
+│   ├── AntiFraud/              # IAntiFraudRule, AntiFraudContext, AntiFraudCampaignConfig
+│   └── Exceptions/             # AntiFraudException (with RuleCode factory methods)
+│
+├── ValiantXP.Application/      # Application Business Rules
+│   ├── Features/               # MediatR Commands & Queries
+│   │   ├── Auth/               # RequestOtp, VerifyOtp, VerifyMfa commands
+│   │   └── Dynamics/           # GetChallenge query, SubmitChallenge command + handlers
+│   ├── AntiFraud/              # IAntiFraudPipeline, AntiFraudPipeline
+│   ├── Common/                 # Result<T>, IApplicationDbContext
+│   └── DTOs/                   # Request/Response DTOs
+│
+├── ValiantXP.Infrastructure/   # Interface Adapters & Frameworks
+│   ├── Data/                   # ApplicationDbContext, EF Core Configurations, Migrations
+│   ├── Identity/               # TokenService, OtpService, MfaService, EmailOtpSender, WhatsAppOtpSender
+│   ├── Dynamics/               # TriviaStrategy, SurveyStrategy, CodeStrategy, DynamicService
+│   ├── AntiFraud/Rules/        # 8 anti-fraud rules
+│   └── Repositories/           # GenericRepository<T>, UnitOfWork, all specific repositories
+│
+├── ValiantXP.API/              # Entry Point
+│   ├── Controllers/            # AuthController, DynamicsController
+│   ├── Middleware/             # GlobalExceptionHandlerMiddleware
+│   └── Program.cs              # DI composition root, middleware pipeline
+│
+└── ValiantXP.Tests/            # xUnit unit + integration tests (51 tests)
+    ├── Features/Auth/
+    ├── Features/Dynamics/
+    └── AntiFraud/
+```
+
+---
+
+## Authentication Flow
+
+```
+Client
+  │
+  ├─► POST /api/auth/otp/request  { contact, channel: "Email"|"WhatsApp" }
+  │       │
+  │       └─► OtpService: generate 6-digit OTP, hash, store (10min expiry)
+  │           IOtpSender (Email or WhatsApp) → send OTP
+  │
+  ├─► POST /api/auth/otp/verify  { contact, otp }
+  │       │
+  │       ├─► Validate OTP hash + expiry
+  │       ├─► Auto-register if user doesn't exist
+  │       ├─► if IsMfaEnabled = true → return { mfaRequired: true, tempToken }
+  │       └─► if IsMfaEnabled = false → return { accessToken, refreshToken }
+  │
+  ├─► POST /api/auth/mfa/verify  { tempToken, totp }  [if MFA required]
+  │       │
+  │       └─► Validate TOTP via RFC 6238 → return { accessToken, refreshToken }
+  │
+  └─► POST /api/auth/refresh  { refreshToken }
+          │
+          └─► Rotate refresh token → return new { accessToken, refreshToken }
+```
+
+---
+
+## Dynamics Engine Flow
+
+```
+POST /api/dynamics/{id}/submit  [Authorize]
+  │
+  ├─ 1. Load DynamicChallenge + Campaign
+  ├─ 2. Deserialize AntiFraudCampaignConfig from DynamicChallenge.AntiFraudConfigJson
+  ├─ 3. Build AntiFraudContext (userId, challengeId, campaignId, type, remoteIp, inputs, config)
+  │
+  ├─ 4. AntiFraudPipeline.RunAsync(context)
+  │       │
+  │       ├─ Order 5:  CampaignActiveWindowRule     [all types]
+  │       ├─ Order 10: CodeExistsRule               [Code only]
+  │       ├─ Order 20: CodeNotUsedRule              [Code only]
+  │       ├─ Order 30: MaxRedemptionsPerUserRule     [Code only]
+  │       ├─ Order 30: MaxTriviaAttemptsRule         [Trivia only]
+  │       ├─ Order 30: SurveyOncePerUserRule         [Survey only]
+  │       ├─ Order 40: MaxAttemptsPerIpRule          [Code only]
+  │       └─ Order 50: FailedAttemptsBlockRule       [Code only]
+  │           │
+  │           └─ AntiFraudException? → record FailedAttempt → return error
+  │
+  ├─ 5. Resolve IDynamicStrategy by DynamicChallenge.Type
+  │       ├─ Trivia  → TriviaStrategy  (score vs passingScore from ConfigurationJson)
+  │       ├─ Survey  → SurveyStrategy  (always succeeds)
+  │       └─ Code    → CodeStrategy    (atomic mark UsedAt + UserId)
+  │
+  ├─ 6. Update UserChallengeProgress (Attempts, Score, Status, CompletedAt)
+  ├─ 7. SaveChanges
+  ├─ 8. [if success] Publish ChallengeCompletedEvent
+  │       └─ ChallengeCompletedEventHandler → InstantWin lottery → UserPrize
+  │
+  └─ 9. Return ChallengeResultDto
+          { success, message, payload, awardedPrizes, nextChallengeId }
+```
+
+---
+
+## Anti-Fraud Pipeline
+
+| Order | Rule | Dynamic Type | PromoHub Equivalent |
+|------:|------|-------------|---------------------|
+| 5 | `CampaignActiveWindowRule` | **All** | Campaign date validation |
+| 10 | `CodeExistsRule` | Code | `ExchangeCode` SP — check #1 |
+| 20 | `CodeNotUsedRule` | Code | `ExchangeCode` SP — check #2 |
+| 30 | `MaxRedemptionsPerUserRule` | Code | `ValidateExchangeCode` SP (user) |
+| 30 | `MaxTriviaAttemptsRule` | Trivia | — |
+| 30 | `SurveyOncePerUserRule` | Survey | — |
+| 40 | `MaxAttemptsPerIpRule` | Code | `ValidateExchangeCode` SP (IP) |
+| 50 | `FailedAttemptsBlockRule` | Code | `DetectBots` SP |
+
+Per-campaign configuration is stored as JSON in `DynamicChallenge.AntiFraudConfigJson` and deserialized to `AntiFraudCampaignConfig` at runtime. Each module has its own config section (`Code`, `Trivia`, `Survey`).
+
+---
+
+## Technology Decisions
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| **Mediator** | MediatR | Decouples commands/queries from handlers; enables domain events without tight coupling |
+| **ORM** | EF Core 8 + SQL Server | Mature, type-safe, supports migrations and async queries |
+| **Dynamic Strategy** | Strategy Pattern via `IDynamicStrategy` | Allows adding new dynamic types without modifying existing code (Open/Closed) |
+| **Anti-Fraud** | Rule Pipeline via `IAntiFraudRule` | Rules are independently injectable, orderable, and testable; mirrors PromoHub's Template Method but more composable |
+| **Auth** | Passwordless OTP + TOTP MFA | No password storage risk; omnichannel (Email/WhatsApp) via `OtpChannel` enum |
+| **Containerization** | Docker + Docker Compose | Dev/prod parity; orchestrated with SQL Server sidecar |
+| **CI/CD** | GitHub Actions | Automated build, test, and semantic version tagging on merge to main |

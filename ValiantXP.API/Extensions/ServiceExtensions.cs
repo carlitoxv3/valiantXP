@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace ValiantXP.API.Extensions;
@@ -43,7 +45,19 @@ public static class ServiceExtensions
     {
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "ValiantXP API", Version = "v1" });
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "ValiantXP API",
+                Version = "v1",
+                Description = "Gamification platform API — passwordless auth (OTP + MFA), dynamics engine (Trivia, Survey, Code), event-driven InstantWin prizes, and per-campaign anti-fraud pipeline.",
+                Contact = new OpenApiContact { Name = "ValiantXP Team" }
+            });
+
+            // Include XML comments for Swagger UI endpoint documentation
+            var xmlFile = $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            if (File.Exists(xmlPath))
+                options.IncludeXmlComments(xmlPath);
             
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

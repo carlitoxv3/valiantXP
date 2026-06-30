@@ -2,6 +2,7 @@ using Azure.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using ValiantXP.API.Extensions;
+using ValiantXP.API.Middleware;
 using ValiantXP.Application;
 using ValiantXP.Infrastructure;
 
@@ -67,6 +68,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Global exception handler — must come before auth and rate limiting
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseRateLimiter();
 
