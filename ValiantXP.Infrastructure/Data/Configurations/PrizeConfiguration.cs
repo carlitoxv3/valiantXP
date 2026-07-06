@@ -84,5 +84,14 @@ public class PrizeConfiguration : IEntityTypeConfiguration<Prize>
             .HasForeignKey(x => x.GiftCardProviderId)
             .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
+
+        // PositionWin flags (Sprint 11)
+        builder.Property(p => p.IsBaseReward)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.Property(p => p.IsPositionalReward)
+            .IsRequired()
+            .HasDefaultValue(false);
     }
 }

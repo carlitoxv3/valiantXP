@@ -25,6 +25,10 @@ public class DynamicChallengeConfiguration : IEntityTypeConfiguration<DynamicCha
         builder.Property(dc => dc.IsActive)
             .IsRequired();
 
+        // PositionWin configuration JSON blob (Sprint 11)
+        builder.Property(dc => dc.PositionWinConfigJson)
+            .IsRequired(false); // nullable nvarchar(max)
+
         // Relationships
         builder.HasOne(dc => dc.Campaign)
             .WithMany(c => c.Challenges)

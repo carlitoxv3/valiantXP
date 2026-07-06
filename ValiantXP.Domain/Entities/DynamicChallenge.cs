@@ -26,6 +26,13 @@ public class DynamicChallenge : Entity
     /// </summary>
     public string? AntiFraudConfigJson { get; set; }
 
+    /// <summary>
+    /// JSON blob deserialized to PositionWinConfig at runtime.
+    /// Null means position-based instant-win is disabled for this challenge.
+    /// Stored as nvarchar(max) — see PositionWinConfig in Application.Models.
+    /// </summary>
+    public string? PositionWinConfigJson { get; set; }
+
     public ICollection<Prize> Prizes { get; set; } = new List<Prize>();
     public ICollection<UserChallengeProgress> UserProgresses { get; set; } = new List<UserChallengeProgress>();
 }

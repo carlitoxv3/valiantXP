@@ -27,17 +27,20 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPublisher _publisher;
     private readonly IAntiFraudPipeline _antiFraudPipeline;
+    private readonly IPositionWinService _positionWinService;
 
     public SubmitChallengeCommandHandler(
         IDynamicService dynamicService,
         IUnitOfWork unitOfWork,
         IPublisher publisher,
-        IAntiFraudPipeline antiFraudPipeline)
+        IAntiFraudPipeline antiFraudPipeline,
+        IPositionWinService positionWinService)
     {
         _dynamicService = dynamicService;
         _unitOfWork = unitOfWork;
         _publisher = publisher;
         _antiFraudPipeline = antiFraudPipeline;
+        _positionWinService = positionWinService;
     }
 
     public async Task<Result<ChallengeResultDto>> Handle(SubmitChallengeCommand request, CancellationToken cancellationToken)
@@ -114,24 +117,6 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
         // Detect Rally by the typed payload marker returned by RallyStrategy.
         bool isRallySubmission = dynamicResult.Payload is RallySubmissionPayload;
 
-        // Detect position_based mode (returned by CodeStrategy)
-        bool isPositionBased = false;
-        bool isPosWinner = false;
-        string? prizeTier = null;
-        Guid? overrideNextChallengeId = null;
-
-        if (dynamicResult.Payload is IDictionary<string, object> payloadDict
-            && payloadDict.TryGetValue("PositionBased", out var pbVal) && pbVal is true)
-        {
-            isPositionBased = true;
-            if (payloadDict.TryGetValue("IsWinner", out var iwVal) && iwVal is bool iwBool)
-                isPosWinner = iwBool;
-            if (payloadDict.TryGetValue("PrizeTier", out var ptVal))
-                prizeTier = ptVal?.ToString();
-            if (payloadDict.TryGetValue("OverrideNextChallengeId", out var ncVal) && ncVal is Guid ncGuid)
-                overrideNextChallengeId = ncGuid;
-        }
-
         // 8. Update or create user progress
         var now = DateTime.UtcNow;
         // For Rally, status = Pending (not Completed) — prize fires on winner selection.
@@ -162,23 +147,42 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
             await _unitOfWork.UserChallengeProgresses.UpdateAsync(progress, cancellationToken);
         }
 
-        // Position-based winner: reserve the prize so trivia can confirm it
-        if (isPositionBased && isPosWinner && prizeTier != null)
+        // ─── Universal Position Win Evaluation ──────────────────────────────────────
+        // Runs for ALL challenge types (Code, Trivia, Survey, Rally).
+        // Position is isolated per DynamicChallengeId — no mixing across types.
+        var prizes = await _unitOfWork.Prizes.GetByChallengeIdAsync(request.ChallengeId, cancellationToken);
+        var posResult = await _positionWinService.EvaluateAsync(
+            request.ChallengeId,
+            challenge.PositionWinConfigJson,
+            prizes.ToList(),
+            cancellationToken);
+
+        // If winner: reserve the positional prize in this submission's progress
+        if (posResult.IsWinner && posResult.ReservedPrizeId.HasValue)
+            progress.ReservedPrizeId = posResult.ReservedPrizeId;
+
+        // Merge position win data into the result payload
+        var mergedPayload = new Dictionary<string, object>();
+        if (dynamicResult.Payload is IDictionary<string, object> strategyDict)
+            foreach (var kv in strategyDict)
+                mergedPayload[kv.Key] = kv.Value;
+        if (posResult.IsEnabled)
         {
-            var prizes = await _unitOfWork.Prizes.GetByChallengeIdAsync(request.ChallengeId, cancellationToken);
-            var reservedPrize = prizes.FirstOrDefault(p => p.ExternalReference == prizeTier)
-                             ?? prizes.FirstOrDefault();
-            if (reservedPrize != null)
-                progress.ReservedPrizeId = reservedPrize.Id;
+            mergedPayload["PositionBased"] = true;
+            mergedPayload["Position"]      = posResult.Position;
+            mergedPayload["IsWinner"]      = posResult.IsWinner;
+            if (posResult.PrizeTier != null)
+                mergedPayload["PrizeTier"] = posResult.PrizeTier;
         }
+        var finalPayload = mergedPayload.Count > 0 ? (object)mergedPayload : dynamicResult.Payload;
+        // ────────────────────────────────────────────────────────────────────────────
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         // 9. Publish ChallengeCompletedEvent ONLY for sync dynamics (Trivia, Survey, Code).
         //    Rally fires this event later via RallyWinnerSelectedEventHandler.
-        //    Position-based Code: skip InstantWin here — ChallengeCompletedEvent fires on Trivia step.
-        bool skipInstantWin = isPositionBased; // prize confirmed on trivia completion
-        if (dynamicResult.Success && !isRallySubmission && !skipInstantWin)
+        //    Position-based: event always fires (handler filters positional prizes).
+        if (dynamicResult.Success && !isRallySubmission)
         {
             var completedEvent = new ChallengeCompletedEvent(request.UserId, request.ChallengeId, progress.Id);
             await _publisher.Publish(completedEvent, cancellationToken);
@@ -203,18 +207,17 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
 
         var resultDto = new ChallengeResultDto
         {
-            Success = dynamicResult.Success,
-            Message = dynamicResult.Message,
-            Payload = dynamicResult.Payload,
+            Success     = dynamicResult.Success,
+            Message     = dynamicResult.Message,
+            Payload     = finalPayload,
             AwardedPrizeNames = awardedPrizeNames,
-            PointsAwarded = totalPointsAwarded,
-            // Position-based: only return NextChallengeId when user won (leads to trivia).
-            // If not a winner, null so the flow ends. Supports per-tier override.
-            NextChallengeId = isPositionBased
-                ? (isPosWinner ? (overrideNextChallengeId ?? challenge.NextChallengeId) : null)
+            PointsAwarded     = totalPointsAwarded,
+            // Position-based: only chain to NextChallenge when user won.
+            // Non-position: chain on success as before.
+            NextChallengeId = posResult.IsEnabled
+                ? (posResult.IsWinner ? challenge.NextChallengeId : null)
                 : (dynamicResult.Success ? challenge.NextChallengeId : null)
         };
-
 
         return Result<ChallengeResultDto>.Success(resultDto);
     }

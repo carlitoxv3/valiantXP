@@ -55,4 +55,11 @@ public class Prize : Entity
     /// </summary>
     public Guid? GiftCardProviderId { get; set; }
     public GiftCardProvider? GiftCardProvider { get; set; }
+
+    // --- PositionWin flags ---
+    /// <summary>If true, this prize is always awarded when the challenge completes successfully.</summary>
+    public bool IsBaseReward { get; set; } = false;
+
+    /// <summary>If true, awarded only when user hits a winning position AND passes the confirmation challenge (trivia).</summary>
+    public bool IsPositionalReward { get; set; } = false;
 }

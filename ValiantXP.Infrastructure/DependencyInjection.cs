@@ -14,6 +14,7 @@ using ValiantXP.Infrastructure.Data;
 using ValiantXP.Infrastructure.Dynamics;
 using ValiantXP.Infrastructure.Identity;
 using ValiantXP.Infrastructure.Repositories;
+using ValiantXP.Infrastructure.Services;
 
 namespace ValiantXP.Infrastructure;
 
@@ -114,6 +115,9 @@ public static class DependencyInjection
         services.AddScoped<IPrizeAwardStrategy, PointsPrizeAwardStrategy>();
         services.AddScoped<IPrizeAwardStrategy, ProductPrizeAwardStrategy>(); // handles GiftCard pool via Prize.GiftCardProviderId
         services.AddScoped<IInstantWinAwarder, InstantWinAwarder>();
+
+        // PositionWin Engine — universal position-based instant-win (Sprint 11)
+        services.AddScoped<IPositionWinService, PositionWinService>();
 
         // GiftCard Module (Sprint 10)
         services.AddScoped<IGiftCardRepository, GiftCardRepository>();

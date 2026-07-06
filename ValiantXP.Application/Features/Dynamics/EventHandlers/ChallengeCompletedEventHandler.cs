@@ -20,10 +20,11 @@ namespace ValiantXP.Application.Features.Dynamics.EventHandlers;
 ///   5. Publish PrizeAwardedEvent or NoPrizeEvent
 ///   6. Always log attempt (mirrors PromoHub's Azure Table LogInstantWin)
 ///
-/// Position-Based InstantWin (Meseros flow):
-///   If the user has a pending reservation (ReservedPrizeId) from a Code challenge
-///   in the same campaign, the reserved prize is confirmed here instead of running
-///   the normal random InstantWin engine.
+/// Position-Based InstantWin (universal):
+///   If the user has a pending reservation (ReservedPrizeId) from a previous challenge
+///   in the same campaign (set by IPositionWinService), the reserved prize is confirmed
+///   here (via ConfirmReservedPrizeAsync) BEFORE running the normal base InstantWin.
+///   Both can coexist: positional prize gets confirmed AND base InstantWin runs.
 ///
 /// Replaces the old handler that awarded ALL prizes without selection/stock control.
 /// </summary>
@@ -57,91 +58,51 @@ public class ChallengeCompletedEventHandler : INotificationHandler<ChallengeComp
 
     public async Task Handle(ChallengeCompletedEvent notification, CancellationToken cancellationToken)
     {
-        // ─── Position-Based Prize Confirmation (Meseros flow) ────────────────────
-        // If this Trivia completion follows a Code step that reserved a prize,
-        // confirm the reserved prize instead of running random InstantWin.
-        var challenge = await _unitOfWork.DynamicChallenges.GetAsync(
-            notification.DynamicChallengeId, cancellationToken);
+        var ct = cancellationToken;
 
+        var challenge = await _unitOfWork.DynamicChallenges.GetAsync(
+            notification.DynamicChallengeId, ct);
+
+        // ─── Position-Based Prize Confirmation ──────────────────────────────────
+        // Check if this challenge completion should confirm a positional prize
+        // reservation set by IPositionWinService during a previous challenge submission.
         if (challenge != null)
         {
             var codeProgress = await _progressRepo.GetLatestCodeProgressWithReservationAsync(
-                notification.UserId, challenge.CampaignId, cancellationToken);
+                notification.UserId, challenge.CampaignId, ct);
 
             if (codeProgress?.ReservedPrizeId != null)
             {
-                var reservedPrize = await _unitOfWork.Prizes.GetAsync(
-                    codeProgress.ReservedPrizeId.Value, cancellationToken);
+                _logger.LogInformation(
+                    "PositionWin confirmation: User={UserId} ReservedPrize={PrizeId}",
+                    notification.UserId, codeProgress.ReservedPrizeId);
 
-                if (reservedPrize != null && reservedPrize.RemainingQuantity > 0)
-                {
-                    _logger.LogInformation(
-                        "PositionWin: confirming reserved prize {PrizeId} for User={UserId} after Trivia {ChallengeId}",
-                        reservedPrize.Id, notification.UserId, notification.DynamicChallengeId);
+                await ConfirmReservedPrizeAsync(
+                    notification.UserId,
+                    codeProgress.ReservedPrizeId.Value,
+                    notification.DynamicChallengeId,
+                    ct);
 
-                    // Decrement stock atomically via EF (optimistic, row still has stock)
-                    reservedPrize.RemainingQuantity--;
-                    await _unitOfWork.Prizes.UpdateAsync(reservedPrize, cancellationToken);
+                // Clear reservation
+                codeProgress.ReservedPrizeId = null;
+                await _unitOfWork.UserChallengeProgresses.UpdateAsync(codeProgress, ct);
+                await _unitOfWork.SaveChangesAsync(ct);
 
-                    // Create UserPrize
-                    var userPrize = new UserPrize
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = notification.UserId,
-                        PrizeId = reservedPrize.Id,
-                        PrizeType = reservedPrize.PrizeType,
-                        PointsAwarded = reservedPrize.PrizeType == PrizeType.Points ? reservedPrize.Quantity : 0,
-                        Code = $"VXP-{reservedPrize.PrizeType}-{Guid.NewGuid().ToString("N")[..8].ToUpper()}",
-                        AwardedAt = DateTime.UtcNow
-                    };
-                    await _unitOfWork.UserPrizes.AddAsync(userPrize, cancellationToken);
-
-                    // Point movement ledger entry (for Points-type prizes)
-                    if (reservedPrize.PrizeType == PrizeType.Points)
-                    {
-                        var movement = new UserPointMovement
-                        {
-                            Id = Guid.NewGuid(),
-                            UserId = notification.UserId,
-                            Points = reservedPrize.Quantity,
-                            Source = "PositionWin",
-                            Description = $"Premio: {reservedPrize.Name}",
-                            ChallengeId = notification.DynamicChallengeId,
-                            PrizeId = reservedPrize.Id,
-                            CreatedAt = DateTime.UtcNow
-                        };
-                        await _pointRepo.AddAsync(movement, cancellationToken);
-                    }
-
-                    // Clear reservation
-                    codeProgress.ReservedPrizeId = null;
-                    await _unitOfWork.UserChallengeProgresses.UpdateAsync(codeProgress, cancellationToken);
-
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    // Publish success event
-                    await _publisher.Publish(new PrizeAwardedEvent(
-                        notification.UserId,
-                        reservedPrize.Id,
-                        userPrize.Id,
-                        reservedPrize.PrizeType,
-                        userPrize.PointsAwarded),
-                        cancellationToken);
-
-                    return; // Do NOT run normal InstantWin for this completion
-                }
+                // Still continue to award base rewards below (don't return early)
             }
         }
-        // ─────────────────────────────────────────────────────────────────────────
+        // ────────────────────────────────────────────────────────────────────────
 
-        // 1. Load prizes for this challenge (normal InstantWin path)
+        // 1. Load prizes for this challenge (base InstantWin path only — exclude positional)
         var prizes = (await _unitOfWork.Prizes.GetByChallengeIdAsync(
-            notification.DynamicChallengeId, cancellationToken)).ToList();
+            notification.DynamicChallengeId, ct))
+            .Where(p => !p.IsPositionalReward)  // exclude positional prizes from normal InstantWin
+            .ToList();
 
         if (prizes.Count == 0)
         {
             _logger.LogDebug(
-                "InstantWin: No prizes configured for challenge {ChallengeId}",
+                "InstantWin: No base prizes configured for challenge {ChallengeId}",
                 notification.DynamicChallengeId);
             return;
         }
@@ -156,7 +117,7 @@ public class ChallengeCompletedEventHandler : INotificationHandler<ChallengeComp
         };
 
         // 3. Select prize (runs eligibility filter chain + random selection)
-        var selectedPrize = await _engine.TrySelectPrizeAsync(prizes, context, cancellationToken);
+        var selectedPrize = await _engine.TrySelectPrizeAsync(prizes, context, ct);
 
         // Always log attempt — mirrors PromoHub's Azure Table "LogInstantWin"
         _logger.LogInformation(
@@ -173,12 +134,12 @@ public class ChallengeCompletedEventHandler : INotificationHandler<ChallengeComp
                     context.UserId,
                     context.ChallengeId,
                     "No eligible prizes or null slot selected"),
-                cancellationToken);
+                ct);
             return;
         }
 
         // 5. Award the prize via strategy
-        var awarded = await _awarder.AwardAsync(selectedPrize, context, cancellationToken);
+        var awarded = await _awarder.AwardAsync(selectedPrize, context, ct);
 
         // 6. Publish success event
         await _publisher.Publish(
@@ -188,6 +149,71 @@ public class ChallengeCompletedEventHandler : INotificationHandler<ChallengeComp
                 awarded.Id,
                 awarded.PrizeType,
                 awarded.PointsAwarded),
-            cancellationToken);
+            ct);
+    }
+
+    /// <summary>
+    /// Confirms a positional prize that was reserved by IPositionWinService.
+    /// Performs atomic stock decrement and creates the UserPrize + point ledger entry.
+    /// </summary>
+    private async Task ConfirmReservedPrizeAsync(
+        Guid userId, Guid prizeId, Guid challengeId, CancellationToken ct)
+    {
+        var prize = await _unitOfWork.Prizes.GetAsync(prizeId, ct);
+        if (prize == null)
+        {
+            _logger.LogWarning("PositionWin: Prize {PrizeId} not found on confirmation", prizeId);
+            return;
+        }
+
+        // Optimistic stock decrement — check remaining quantity
+        if (prize.RemainingQuantity <= 0)
+        {
+            _logger.LogWarning(
+                "PositionWin: Prize {PrizeId} out of stock on confirmation for User={UserId}",
+                prizeId, userId);
+            return;
+        }
+
+        prize.RemainingQuantity--;
+        await _unitOfWork.Prizes.UpdateAsync(prize, ct);
+
+        var code = $"VXP-POS-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+        var userPrize = new UserPrize
+        {
+            Id            = Guid.NewGuid(),
+            UserId        = userId,
+            PrizeId       = prizeId,
+            PrizeType     = prize.PrizeType,
+            PointsAwarded = prize.PrizeType == PrizeType.Points ? prize.Quantity : 0,
+            Code          = code,
+            AwardedAt     = DateTime.UtcNow,
+        };
+        await _unitOfWork.UserPrizes.AddAsync(userPrize, ct);
+
+        if (prize.PrizeType == PrizeType.Points)
+        {
+            var movement = new UserPointMovement
+            {
+                Id          = Guid.NewGuid(),
+                UserId      = userId,
+                Points      = prize.Quantity,
+                Source      = "PositionWin",
+                Description = $"Premio posicional: {prize.Name}",
+                ChallengeId = challengeId,
+                PrizeId     = prizeId,
+                CreatedAt   = DateTime.UtcNow,
+            };
+            await _pointRepo.AddAsync(movement, ct);
+        }
+
+        await _unitOfWork.SaveChangesAsync(ct);
+
+        _logger.LogInformation(
+            "PositionWin: confirmed prize {PrizeId} ({PrizeName}) for User={UserId}",
+            prizeId, prize.Name, userId);
+
+        await _publisher.Publish(new PrizeAwardedEvent(
+            userId, prizeId, userPrize.Id, prize.PrizeType, userPrize.PointsAwarded), ct);
     }
 }
