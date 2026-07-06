@@ -4269,11 +4269,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
       "projectName": "ValiantXP.Infrastructure",
-      "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\obj\\",
+      "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -4290,8 +4290,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
-              "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
+            "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
+              "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
             }
           }
         }

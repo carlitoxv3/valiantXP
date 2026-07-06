@@ -64,8 +64,14 @@ public static class DependencyInjection
         // Identity Federation services
         services.AddSingleton<IPendingLinkService, InMemoryPendingLinkService>();
         services.AddScoped<IIdentityResolutionService, IdentityResolutionService>();
+        // OAuth Provider Adapters — registered as IEnumerable<IOAuthProviderAdapter>
+        // OAuthController resolves by ProviderName at runtime
         services.AddScoped<IOAuthProviderAdapter, GoogleOAuthAdapter>();
+        services.AddScoped<IOAuthProviderAdapter, SpotifyOAuthAdapter>();
+        services.AddScoped<IOAuthProviderAdapter, TwitchOAuthAdapter>();
         services.AddHttpClient("google-oauth");
+        services.AddHttpClient("spotify-oauth");
+        services.AddHttpClient("twitch-oauth");
 
         // Rally repositories
         services.AddScoped<IRallySubmissionRepository, RallySubmissionRepository>();

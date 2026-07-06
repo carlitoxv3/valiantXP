@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PrAIjtfGMQU=",
+  "dgSpecHash": "3lJvpsHVll8=",
   "success": true,
-  "projectFilePath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
+  "projectFilePath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ag_dw\\.nuget\\packages\\mediatr\\14.1.0\\mediatr.14.1.0.nupkg.sha512",
     "C:\\Users\\ag_dw\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",
