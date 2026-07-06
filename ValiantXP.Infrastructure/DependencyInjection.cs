@@ -106,8 +106,7 @@ public static class DependencyInjection
 
         // InstantWin Award Strategies
         services.AddScoped<IPrizeAwardStrategy, PointsPrizeAwardStrategy>();
-        services.AddScoped<IPrizeAwardStrategy, ProductPrizeAwardStrategy>();
-        services.AddScoped<IPrizeAwardStrategy, GiftCardPrizeAwardStrategy>();
+        services.AddScoped<IPrizeAwardStrategy, ProductPrizeAwardStrategy>(); // handles GiftCard pool via Prize.GiftCardProviderId
         services.AddScoped<IInstantWinAwarder, InstantWinAwarder>();
 
         // GiftCard Module (Sprint 10)
