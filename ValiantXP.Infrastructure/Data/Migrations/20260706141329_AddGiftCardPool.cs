@@ -36,7 +36,7 @@ namespace ValiantXP.Infrastructure.Data.Migrations
                         column: x => x.CampaignId,
                         principalTable: "Campaigns",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,13 +67,13 @@ namespace ValiantXP.Infrastructure.Data.Migrations
                         column: x => x.UserPrizeId,
                         principalTable: "UserPrizes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_GiftCards_Users_AssignedToUserId",
                         column: x => x.AssignedToUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
@@ -118,7 +118,7 @@ namespace ValiantXP.Infrastructure.Data.Migrations
                 column: "GiftCardProviderId",
                 principalTable: "GiftCardProviders",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                onDelete: ReferentialAction.NoAction);
 
             // Data migration: existing PrizeType=3 (GiftCard deprecated) -> PrizeType=2 (Product)
             // GiftCard is now a DELIVERY MECHANISM on Product prizes via GiftCardProviderId.

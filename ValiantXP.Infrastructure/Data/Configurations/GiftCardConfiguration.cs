@@ -26,10 +26,12 @@ public class GiftCardConfiguration : IEntityTypeConfiguration<GiftCard>
         builder.HasOne(x => x.Provider).WithMany(x => x.GiftCards)
             .HasForeignKey(x => x.ProviderId).OnDelete(DeleteBehavior.Restrict);
 
+        // ClientSetNull: EF sets FK to null in memory before SaveChanges
+        // avoids SQL Server "multiple cascade paths" error (User→UserPrize cascade + User→GiftCard)
         builder.HasOne(x => x.AssignedToUser).WithMany()
-            .HasForeignKey(x => x.AssignedToUserId).OnDelete(DeleteBehavior.SetNull).IsRequired(false);
+            .HasForeignKey(x => x.AssignedToUserId).OnDelete(DeleteBehavior.ClientSetNull).IsRequired(false);
 
         builder.HasOne(x => x.UserPrize).WithMany()
-            .HasForeignKey(x => x.UserPrizeId).OnDelete(DeleteBehavior.SetNull).IsRequired(false);
+            .HasForeignKey(x => x.UserPrizeId).OnDelete(DeleteBehavior.ClientSetNull).IsRequired(false);
     }
 }

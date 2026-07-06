@@ -12,9 +12,12 @@ public class DynamicChallenge : Entity
 
     public DynamicType Type { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
     public string ConfigurationJson { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    public bool AnonParticipationAllowed { get; set; } = false;
     public Guid? NextChallengeId { get; set; }
+
 
     /// <summary>
     /// JSON blob deserialized to AntiFraudCampaignConfig at runtime.

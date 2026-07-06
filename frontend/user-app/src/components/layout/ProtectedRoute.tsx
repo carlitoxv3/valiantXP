@@ -1,0 +1,17 @@
+import { Navigate } from 'react-router-dom'
+import { useAuthStore } from '@/stores/authStore'
+
+interface ProtectedRouteProps {
+  children: React.ReactNode
+}
+
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const token = useAuthStore((s) => s.token)
+
+  if (!isAuthenticated && !token) {
+    return <Navigate to="/login" replace />
+  }
+
+  return <>{children}</>
+}

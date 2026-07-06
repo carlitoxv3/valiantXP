@@ -17,6 +17,7 @@ public interface IApplicationDbContext
     DbSet<Prize> Prizes { get; }
     DbSet<UserPrize> UserPrizes { get; }
     DbSet<UserPointMovement> UserPointMovements { get; }
+    DbSet<GiftCard> GiftCards { get; }
 
     /// <summary>Provides access to database infrastructure (raw SQL, migrations, etc.).</summary>
     DatabaseFacade Database { get; }

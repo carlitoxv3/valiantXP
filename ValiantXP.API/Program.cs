@@ -22,6 +22,24 @@ if (!string.IsNullOrEmpty(appConfigConnectionString))
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// CORS — allow frontend dev servers
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendDevPolicy", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",  // user-app
+                "http://localhost:5174",  // admin-app
+                "http://localhost:5175",  // admin-app (fallback port)
+                "http://localhost:5176"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -68,6 +86,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("FrontendDevPolicy");
 
 // Global exception handler — must come before auth and rate limiting
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();

@@ -864,8 +864,7 @@ namespace ValiantXP.Infrastructure.Data.Migrations
                 {
                     b.HasOne("ValiantXP.Domain.Entities.User", "AssignedToUser")
                         .WithMany()
-                        .HasForeignKey("AssignedToUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("AssignedToUserId");
 
                     b.HasOne("ValiantXP.Domain.Entities.GiftCardProvider", "Provider")
                         .WithMany("GiftCards")
@@ -875,8 +874,7 @@ namespace ValiantXP.Infrastructure.Data.Migrations
 
                     b.HasOne("ValiantXP.Domain.Entities.UserPrize", "UserPrize")
                         .WithMany()
-                        .HasForeignKey("UserPrizeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("UserPrizeId");
 
                     b.Navigation("AssignedToUser");
 

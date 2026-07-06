@@ -37,14 +37,18 @@ public class UsersController : ControllerBase
         if (user == null)
             return NotFound(new { error = "User not found." });
 
+        // Get total points balance
+        var pointBalance = await _mediator.Send(new GetUserPointBalanceQuery(userId));
+
         return Ok(new
         {
-            user.Id,
-            user.Email,
-            user.UserName,
-            user.PhoneNumber,
-            user.IsMfaEnabled,
-            user.CreatedAt
+            id = user.Id,
+            email = user.Email,
+            displayName = !string.IsNullOrEmpty(user.UserName) ? user.UserName : user.Email.Split('@')[0],
+            avatarUrl = (string?)null,
+            totalPoints = pointBalance?.TotalPoints ?? 0,
+            isMfaEnabled = user.IsMfaEnabled,
+            createdAt = user.CreatedAt
         });
     }
 
@@ -88,12 +92,15 @@ public class UsersController : ControllerBase
         {
             id = i.Id,
             provider = i.Provider.ToString(),
+            externalId = i.ExternalId,
             emailClaim = i.EmailClaim,
             isEmailVerified = i.IsEmailVerified,
             isPrimary = i.IsPrimary,
+            isActive = i.IsActive,
             linkedAt = i.LinkedAt,
             lastSeenAt = i.LastSeenAt
         }));
+
     }
 
     /// <summary>Unlinks an identity provider from the authenticated user (D2 — requires at least one remaining).</summary>
