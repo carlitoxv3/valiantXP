@@ -21,6 +21,7 @@ public record UserPrizeDto(
     PrizeType PrizeType,
     int PointsAwarded,
     string? GiftCardCode,
+    string? GiftCardRedeemUrl,
     string Code,
     DateTime AwardedAt,
     DateTime? ExpiresAt,
@@ -45,6 +46,10 @@ public class GetUserPrizesQueryHandler : IRequestHandler<GetUserPrizesQuery, IRe
                 up.PrizeType,
                 up.PointsAwarded,
                 up.GiftCardCode,
+                _db.GiftCards
+                    .Where(gc => gc.UserPrizeId == up.Id)
+                    .Select(gc => gc.RedeemUrl)
+                    .FirstOrDefault(),
                 up.Code,
                 up.AwardedAt,
                 up.ExpiresAt,

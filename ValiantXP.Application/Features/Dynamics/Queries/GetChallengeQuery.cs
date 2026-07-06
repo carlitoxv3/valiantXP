@@ -42,6 +42,9 @@ public class GetChallengeQueryHandler : IRequestHandler<GetChallengeQuery, Resul
             CampaignId = challenge.CampaignId,
             Type = challenge.Type.ToString(),
             Name = challenge.Name,
+            Description = challenge.Description,
+            IsActive = challenge.IsActive,
+            AnonParticipationAllowed = challenge.AnonParticipationAllowed,
             ConfigurationJson = sanitizedJson
         };
 

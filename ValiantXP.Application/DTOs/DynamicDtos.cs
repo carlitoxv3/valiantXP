@@ -9,6 +9,9 @@ public class ChallengeDto
     public Guid CampaignId { get; set; }
     public string Type { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public bool IsActive { get; set; }
+    public bool AnonParticipationAllowed { get; set; }
     public string ConfigurationJson { get; set; } = string.Empty;
 }
 
