@@ -67,30 +67,43 @@ export default function ChallengePage() {
         {challenge.type === 'Trivia' && (
           <TriviaChallenge
             config={config as TriviaConfig}
-            onSubmit={(answers) =>
-              submitMutation.mutateAsync({
+            onSubmit={async (answers) => {
+              const res = await submitMutation.mutateAsync({
                 inputs: Object.fromEntries(answers.map((a, i) => [`q${i}`, String(a)])),
               })
-            }
+              if (res.nextChallengeId) {
+                setTimeout(() => navigate(`/challenge/${res.nextChallengeId}`), 2500)
+              }
+              return res
+            }}
           />
         )}
         {challenge.type === 'Survey' && (
           <SurveyChallenge
             config={config as SurveyConfig}
-            onSubmit={(answers) =>
-              submitMutation.mutateAsync({
+            onSubmit={async (answers) => {
+              const res = await submitMutation.mutateAsync({
                 inputs: Object.fromEntries(
                   Object.entries(answers).map(([k, v]) => [k, String(v ?? '')])
                 ),
               })
-            }
+              if (res.nextChallengeId) {
+                setTimeout(() => navigate(`/challenge/${res.nextChallengeId}`), 2500)
+              }
+              return res
+            }}
           />
         )}
         {challenge.type === 'Code' && (
           <CodeChallenge
-            onSubmit={(code) =>
-              submitMutation.mutateAsync({ inputs: { code } })
-            }
+            onSubmit={async (code) => {
+              const res = await submitMutation.mutateAsync({ inputs: { code } })
+              if (res.nextChallengeId) {
+                // Dar tiempo al countdown de CodeChallenge (3s) + buffer
+                setTimeout(() => navigate(`/challenge/${res.nextChallengeId}`), 3500)
+              }
+              return res
+            }}
           />
         )}
         {challenge.type === 'Rally' && (

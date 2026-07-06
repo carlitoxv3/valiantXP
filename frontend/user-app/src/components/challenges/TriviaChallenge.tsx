@@ -72,7 +72,8 @@ export function TriviaChallenge({ config, onSubmit, demoMode = false }: TriviaCh
           try {
             const res = await onSubmit(finalAnswers)
             setResult(res)
-            setGameState(res.prize ? 'prize' : 'result')
+            // Use server success to determine game state
+            setGameState(res.success ? 'prize' : 'result')
           } finally {
             setIsSubmitting(false)
           }
@@ -119,7 +120,11 @@ export function TriviaChallenge({ config, onSubmit, demoMode = false }: TriviaCh
     if (hasTimer) setTimeLeft(config.timeLimitSeconds!)
   }
 
-  const correctCount = answers.filter((a, i) => questions[i]?.options[a]?.isCorrect).length
+  // Use server-side CorrectCount if available (opt.isCorrect is stripped from config for security)
+  const serverCorrectCount = result?.payload?.CorrectCount
+  const correctCount: number = typeof serverCorrectCount === 'number'
+    ? serverCorrectCount
+    : answers.filter((a, i) => questions[i]?.options[a]?.isCorrect).length
 
   return (
     <div className="relative">

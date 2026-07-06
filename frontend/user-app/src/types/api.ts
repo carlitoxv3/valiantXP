@@ -77,6 +77,9 @@ export interface ChallengeResult {
   pointsAwarded?: number
   prize?: UserPrize
   nextChallengeId?: string
+  awardedPrizeName?: string
+  // Server-side scoring payload (e.g. trivia CorrectCount, Score, Total; position-based: IsWinner, Position, PrizeTier)
+  payload?: Record<string, unknown>
 }
 
 export interface UserPrize {

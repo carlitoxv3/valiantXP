@@ -156,6 +156,7 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
 
         // 10. Get awarded prizes for response DTO
         var awardedPrizeNames = new List<string>();
+        int totalPointsAwarded = 0;
         if (dynamicResult.Success)
         {
             var userPrizes = await _unitOfWork.UserPrizes.GetByUserIdAsync(request.UserId, cancellationToken);
@@ -165,6 +166,7 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
                     && up.AwardedAt >= now.AddSeconds(-10))
                 {
                     awardedPrizeNames.Add($"{up.Prize.Name} (Code: {up.Code})");
+                    totalPointsAwarded += up.PointsAwarded;
                 }
             }
         }
@@ -175,8 +177,10 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
             Message = dynamicResult.Message,
             Payload = dynamicResult.Payload,
             AwardedPrizeNames = awardedPrizeNames,
+            PointsAwarded = totalPointsAwarded,
             NextChallengeId = dynamicResult.Success ? challenge.NextChallengeId : null
         };
+
 
         return Result<ChallengeResultDto>.Success(resultDto);
     }

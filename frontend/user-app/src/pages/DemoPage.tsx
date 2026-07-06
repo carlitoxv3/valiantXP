@@ -351,7 +351,28 @@ export default function DemoPage() {
                 <SurveyChallenge config={DEMO_SURVEY} demoMode />
               )}
               {activeTab === 'code' && (
-                <CodeChallenge demoMode demoValidCode="DEMO2024" />
+                <CodeChallenge
+                  onSubmit={async (code) => {
+                    // Demo: simula respuesta position-based
+                    await new Promise((r) => setTimeout(r, 1200))
+                    const upper = code.trim().toUpperCase()
+                    const isWinner = upper === 'DEMO2024' || upper === 'MESA001'
+                    return {
+                      success: true,
+                      message: isWinner
+                        ? 'Posición #3 del día. ¡Posición ganadora!'
+                        : 'Posición #7 del día.',
+                      nextChallengeId: isWinner ? undefined : undefined,
+                      payload: {
+                        Position: isWinner ? 3 : 7,
+                        IsWinner: isWinner,
+                        DailyCount: isWinner ? 3 : 7,
+                        PositionBased: true,
+                        PrizeTier: isWinner ? 'silver' : undefined,
+                      },
+                    }
+                  }}
+                />
               )}
               {activeTab === 'prize' && (
                 <PrizeWinDemo />

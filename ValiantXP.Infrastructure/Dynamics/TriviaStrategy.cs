@@ -100,51 +100,71 @@ public class TriviaStrategy : IDynamicStrategy
         int correctCount = 0;
         int questionCount = 0;
 
+        int questionIndex = 0;
         foreach (var questionElement in questionsElement.EnumerateArray())
         {
             questionCount++;
-            
-            // Get question id
-            string questionId = string.Empty;
-            if (questionElement.TryGetProperty("id", out var idProp))
-            {
-                questionId = idProp.GetString() ?? string.Empty;
-            }
-            else if (questionElement.TryGetProperty("questionId", out var qIdProp))
-            {
-                questionId = qIdProp.GetString() ?? string.Empty;
-            }
 
-            // Get correct answer
-            string correctAnswer = string.Empty;
-            if (questionElement.TryGetProperty("correctAnswer", out var ansProp))
-            {
-                correctAnswer = ansProp.GetString() ?? string.Empty;
-            }
+            // --- Determine correct answer ---
+            // Priority 1: correctIndex (int) — matches frontend format { q0: "2", q1: "1" }
+            // Priority 2: correctAnswer (string) — legacy string match
+            int? correctIndex = null;
+            string? correctAnswerStr = null;
+
+            if (questionElement.TryGetProperty("correctIndex", out var ciProp) && ciProp.ValueKind == JsonValueKind.Number)
+                correctIndex = ciProp.GetInt32();
+            else if (questionElement.TryGetProperty("correctAnswer", out var ansProp))
+                correctAnswerStr = ansProp.GetString();
             else if (questionElement.TryGetProperty("answer", out var ansProp2))
-            {
-                correctAnswer = ansProp2.GetString() ?? string.Empty;
-            }
+                correctAnswerStr = ansProp2.GetString();
 
-            // Get question points (default to 10 points per question if not specified)
+            // --- Get question points ---
             int questionPoints = 10;
             if (questionElement.TryGetProperty("points", out var pointsProp) && pointsProp.ValueKind == JsonValueKind.Number)
-            {
                 questionPoints = pointsProp.GetInt32();
-            }
 
             totalPoints += questionPoints;
 
-            // Check user answer
-            if (!string.IsNullOrEmpty(questionId) && context.Inputs.TryGetValue(questionId, out var userAnswer))
+            // --- Match user answer ---
+            // Frontend sends: { "q0": "2", "q1": "1", "q2": "2" } (index as string)
+            // Try q{index} key first, then id-based key
+            string? userAnswer = null;
+
+            var qKey = $"q{questionIndex}";
+            if (context.Inputs.TryGetValue(qKey, out var uaByIndex))
+                userAnswer = uaByIndex;
+            else if (questionElement.TryGetProperty("id", out var idProp))
             {
-                if (string.Equals(userAnswer?.Trim(), correctAnswer?.Trim(), StringComparison.OrdinalIgnoreCase))
+                var qId = idProp.GetString() ?? string.Empty;
+                context.Inputs.TryGetValue(qId, out userAnswer);
+            }
+
+            // --- Check correctness ---
+            if (userAnswer != null)
+            {
+                bool isCorrect = false;
+
+                if (correctIndex.HasValue)
+                {
+                    // Compare as integer index
+                    if (int.TryParse(userAnswer.Trim(), out var userIndex))
+                        isCorrect = userIndex == correctIndex.Value;
+                }
+                else if (!string.IsNullOrEmpty(correctAnswerStr))
+                {
+                    isCorrect = string.Equals(userAnswer.Trim(), correctAnswerStr.Trim(), StringComparison.OrdinalIgnoreCase);
+                }
+
+                if (isCorrect)
                 {
                     correctPoints += questionPoints;
                     correctCount++;
                 }
             }
+
+            questionIndex++;
         }
+
 
         // Calculate score
         // If totalPoints is 0, score is 100

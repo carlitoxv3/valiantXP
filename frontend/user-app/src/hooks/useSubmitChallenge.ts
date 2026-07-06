@@ -5,7 +5,21 @@ import type { ChallengeResult } from '@/types/api'
 export const useSubmitChallenge = (challengeId: string) =>
   useMutation<ChallengeResult, Error, { inputs: Record<string, string> }>({
     mutationFn: ({ inputs }) =>
-      // Backend expects: { inputs: Record<string,string> } (SubmitChallengeRequestDto)
-      api.post(`/dynamics/${challengeId}/submit`, { inputs }).then((r) => r.data),
+      api
+        .post<ChallengeResult>(`/dynamics/${challengeId}/submit`, { inputs })
+        .then((r) => {
+          const d = r.data as ChallengeResult & {
+            awardedPrizeName?: string
+            pointsAwarded?: number
+          }
+          // Normalize backend response → ChallengeResult
+          return {
+            ...d,
+            pointsAwarded: d.pointsAwarded ?? 0,
+            awardedPrizeName: d.awardedPrizeName,
+            payload: d.payload,
+          } satisfies ChallengeResult
+        }),
   })
+
 
