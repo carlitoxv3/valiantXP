@@ -9,10 +9,18 @@ public class ChallengeCompletedEvent : INotification
     public Guid DynamicChallengeId { get; }
     public Guid UserChallengeProgressId { get; }
 
-    public ChallengeCompletedEvent(Guid userId, Guid dynamicChallengeId, Guid userChallengeProgressId)
+    /// <summary>Optional Rally submission that triggered this event.</summary>
+    public Guid? SubmissionId { get; }
+
+    public ChallengeCompletedEvent(
+        Guid userId,
+        Guid dynamicChallengeId,
+        Guid userChallengeProgressId,
+        Guid? submissionId = null)
     {
         UserId = userId;
         DynamicChallengeId = dynamicChallengeId;
         UserChallengeProgressId = userChallengeProgressId;
+        SubmissionId = submissionId;
     }
 }

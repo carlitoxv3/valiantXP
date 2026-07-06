@@ -23,4 +23,27 @@ public class UserPrizeRepository : GenericRepository<UserPrize>, IUserPrizeRepos
             .Where(up => up.UserId == userId)
             .ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc/>
+    public async Task<int> GetAwardCountInWindowAsync(Guid prizeId, DateTime windowStart, CancellationToken ct = default)
+    {
+        return await _dbSet
+            .Where(up => up.PrizeId == prizeId && up.AwardedAt >= windowStart)
+            .CountAsync(ct);
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> GetUserAwardCountInWindowAsync(Guid userId, Guid prizeId, DateTime windowStart, CancellationToken ct = default)
+    {
+        return await _dbSet
+            .Where(up => up.UserId == userId && up.PrizeId == prizeId && up.AwardedAt >= windowStart)
+            .CountAsync(ct);
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> UserAlreadyWonAsync(Guid userId, Guid prizeId, CancellationToken ct = default)
+    {
+        return await _dbSet
+            .AnyAsync(up => up.UserId == userId && up.PrizeId == prizeId, ct);
+    }
 }

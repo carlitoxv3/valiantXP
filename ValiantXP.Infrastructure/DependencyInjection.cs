@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ValiantXP.Application.AntiFraud;
 using ValiantXP.Application.Common.Interfaces;
+using ValiantXP.Application.InstantWin;
+using ValiantXP.Application.InstantWin.Filters;
+using ValiantXP.Application.InstantWin.Strategies;
 using ValiantXP.Domain.AntiFraud;
 using ValiantXP.Domain.Interfaces;
 using ValiantXP.Infrastructure.AntiFraud.Rules;
@@ -37,6 +40,7 @@ public static class DependencyInjection
         services.AddScoped<IUserChallengeProgressRepository, UserChallengeProgressRepository>();
         services.AddScoped<IPrizeRepository, PrizeRepository>();
         services.AddScoped<IUserPrizeRepository, UserPrizeRepository>();
+        services.AddScoped<IUserPointMovementRepository, UserPointMovementRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Identity
@@ -81,6 +85,23 @@ public static class DependencyInjection
         services.AddScoped<IDynamicStrategy, CodeStrategy>();
         services.AddScoped<IDynamicStrategy, RallyStrategy>();
         services.AddScoped<IDynamicService, DynamicService>();
+
+        // InstantWin Engine — selection filters (order matters for short-circuit efficiency)
+        services.AddScoped<IPrizeFilter, StockFilter>();
+        services.AddScoped<IPrizeFilter, GlobalWindowFilter>();
+        services.AddScoped<IPrizeFilter, PerUserWindowFilter>();
+        services.AddScoped<IPrizeFilter, UserAlreadyWonFilter>();
+        services.AddScoped<IInstantWinEngine, InstantWinEngine>();
+
+        // InstantWin Award Strategies
+        services.AddScoped<IPrizeAwardStrategy, PointsPrizeAwardStrategy>();
+        services.AddScoped<IPrizeAwardStrategy, ProductPrizeAwardStrategy>();
+        services.AddScoped<IPrizeAwardStrategy, GiftCardPrizeAwardStrategy>();
+        services.AddScoped<IInstantWinAwarder, InstantWinAwarder>();
+
+        // GiftCard Providers — no external providers in base implementation
+        // External providers can be registered by adding IGiftCardProvider implementations here
+        // e.g., services.AddScoped<IGiftCardProvider, SomeExternalProvider>();
 
         return services;
     }

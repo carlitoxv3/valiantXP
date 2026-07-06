@@ -14,6 +14,7 @@ public interface IUnitOfWork : IDisposable
     IUserChallengeProgressRepository UserChallengeProgresses { get; }
     IPrizeRepository Prizes { get; }
     IUserPrizeRepository UserPrizes { get; }
+    IUserPointMovementRepository UserPointMovements { get; }
     ICodeRepository Codes { get; }
     IFailedAttemptRepository FailedAttempts { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

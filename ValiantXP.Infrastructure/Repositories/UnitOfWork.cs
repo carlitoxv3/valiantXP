@@ -17,6 +17,7 @@ public class UnitOfWork : IUnitOfWork
     private IUserChallengeProgressRepository? _userChallengeProgresses;
     private IPrizeRepository? _prizes;
     private IUserPrizeRepository? _userPrizes;
+    private IUserPointMovementRepository? _userPointMovements;
     private ICodeRepository? _codes;
     private IFailedAttemptRepository? _failedAttempts;
 
@@ -33,6 +34,7 @@ public class UnitOfWork : IUnitOfWork
     public IUserChallengeProgressRepository UserChallengeProgresses => _userChallengeProgresses ??= new UserChallengeProgressRepository(_context);
     public IPrizeRepository Prizes => _prizes ??= new PrizeRepository(_context);
     public IUserPrizeRepository UserPrizes => _userPrizes ??= new UserPrizeRepository(_context);
+    public IUserPointMovementRepository UserPointMovements => _userPointMovements ??= new UserPointMovementRepository(_context);
     public ICodeRepository Codes => _codes ??= new CodeRepository(_context);
     public IFailedAttemptRepository FailedAttempts => _failedAttempts ??= new FailedAttemptRepository(_context);
 

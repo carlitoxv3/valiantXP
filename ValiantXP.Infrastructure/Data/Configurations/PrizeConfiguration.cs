@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ValiantXP.Domain.Entities;
+using ValiantXP.Domain.Enums;
 
 namespace ValiantXP.Infrastructure.Data.Configurations;
 
@@ -21,8 +22,46 @@ public class PrizeConfiguration : IEntityTypeConfiguration<Prize>
             .IsRequired();
 
         builder.Property(p => p.Type)
-            .IsRequired()
+            .IsRequired(false) // legacy field — nullable for new records
             .HasMaxLength(100);
+
+        // --- InstantWin extension fields ---
+        builder.Property(p => p.PrizeType)
+            .IsRequired()
+            .HasConversion<int>(); // stored as int for DB compat
+
+        builder.Property(p => p.AllowNoWin)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.Property(p => p.WindowHours)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(p => p.MaxGlobalInWindow)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(p => p.MaxPerUserInWindow)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(p => p.PointMultiplier)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(p => p.PointsExpirationDays)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(p => p.ExternalReference)
+            .HasMaxLength(256);
+
+        builder.Property(p => p.Description)
+            .HasMaxLength(1024);
+
+        builder.Property(p => p.ImageUrl)
+            .HasMaxLength(512);
 
         // Relationships
         builder.HasOne(p => p.DynamicChallenge)
@@ -30,9 +69,11 @@ public class PrizeConfiguration : IEntityTypeConfiguration<Prize>
             .HasForeignKey(p => p.DynamicChallengeId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Fix: UserPrize owns the FK-side, so configure here without OnDelete to avoid conflict
+        // (UserPrizeConfiguration configures the Restrict behavior on the FK side)
         builder.HasMany(p => p.UserPrizes)
             .WithOne(up => up.Prize)
             .HasForeignKey(up => up.PrizeId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to fix the conflict
     }
 }
