@@ -20,6 +20,8 @@ public class UnitOfWork : IUnitOfWork
     private IUserPointMovementRepository? _userPointMovements;
     private ICodeRepository? _codes;
     private IFailedAttemptRepository? _failedAttempts;
+    private IUserIdentityRepository? _userIdentities;
+    private IGuestSessionRepository? _guestSessions;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -37,6 +39,8 @@ public class UnitOfWork : IUnitOfWork
     public IUserPointMovementRepository UserPointMovements => _userPointMovements ??= new UserPointMovementRepository(_context);
     public ICodeRepository Codes => _codes ??= new CodeRepository(_context);
     public IFailedAttemptRepository FailedAttempts => _failedAttempts ??= new FailedAttemptRepository(_context);
+    public IUserIdentityRepository UserIdentities => _userIdentities ??= new UserIdentityRepository(_context);
+    public IGuestSessionRepository GuestSessions => _guestSessions ??= new GuestSessionRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

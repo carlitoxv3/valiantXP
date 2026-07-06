@@ -17,5 +17,7 @@ public interface IUnitOfWork : IDisposable
     IUserPointMovementRepository UserPointMovements { get; }
     ICodeRepository Codes { get; }
     IFailedAttemptRepository FailedAttempts { get; }
+    IUserIdentityRepository UserIdentities { get; }
+    IGuestSessionRepository GuestSessions { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

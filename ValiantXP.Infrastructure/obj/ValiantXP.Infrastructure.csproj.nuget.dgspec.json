@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {}
+    "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
+    "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj",
+        "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj",
         "projectName": "ValiantXP.Application",
-        "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj",
+        "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj",
         "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\obj\\",
+        "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
-                "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj"
+              "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
+                "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj"
               }
             }
           }
@@ -82,14 +82,14 @@
         }
       }
     },
-    "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
+    "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
+        "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
         "projectName": "ValiantXP.Domain",
-        "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
+        "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\ValiantXP.Domain.csproj",
         "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\obj\\",
+        "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -148,14 +148,14 @@
         }
       }
     },
-    "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {
+    "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
+        "projectUniqueName": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
         "projectName": "ValiantXP.Infrastructure",
-        "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
+        "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\ValiantXP.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\ag_dw\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\obj\\",
+        "outputPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ag_dw\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -172,8 +172,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
-                "projectPath": "C:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
+              "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj": {
+                "projectPath": "c:\\Users\\ag_dw\\Documents\\Massive\\valiantXP\\ValiantXP.Application\\ValiantXP.Application.csproj"
               }
             }
           }
@@ -196,6 +196,10 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.2.0, )"
+            },
+            "Google.Apis.Auth": {
+              "target": "Package",
+              "version": "[1.75.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",

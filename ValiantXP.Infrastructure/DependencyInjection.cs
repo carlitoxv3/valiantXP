@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ValiantXP.Application.AntiFraud;
 using ValiantXP.Application.Common.Interfaces;
+using ValiantXP.Application.Identity;
 using ValiantXP.Application.InstantWin;
 using ValiantXP.Application.InstantWin.Filters;
 using ValiantXP.Application.InstantWin.Strategies;
@@ -55,6 +56,16 @@ public static class DependencyInjection
 
         services.AddScoped<ICodeRepository, CodeRepository>();
         services.AddScoped<IFailedAttemptRepository, FailedAttemptRepository>();
+
+        // Identity Federation repositories
+        services.AddScoped<IUserIdentityRepository, UserIdentityRepository>();
+        services.AddScoped<IGuestSessionRepository, GuestSessionRepository>();
+
+        // Identity Federation services
+        services.AddSingleton<IPendingLinkService, InMemoryPendingLinkService>();
+        services.AddScoped<IIdentityResolutionService, IdentityResolutionService>();
+        services.AddScoped<IOAuthProviderAdapter, GoogleOAuthAdapter>();
+        services.AddHttpClient("google-oauth");
 
         // Rally repositories
         services.AddScoped<IRallySubmissionRepository, RallySubmissionRepository>();

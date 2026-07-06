@@ -27,6 +27,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<FailedAttempt> FailedAttempts => Set<FailedAttempt>();
     public DbSet<RallySubmission> RallySubmissions => Set<RallySubmission>();
     public DbSet<RallySubmissionVote> RallySubmissionVotes => Set<RallySubmissionVote>();
+    public DbSet<UserIdentity> UserIdentities => Set<UserIdentity>();
+    public DbSet<GuestSession> GuestSessions => Set<GuestSession>();
 
     /// <inheritdoc/>
     public async Task<bool> TryDecrementPrizeStockAsync(Guid prizeId, CancellationToken ct = default)

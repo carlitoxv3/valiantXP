@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,5 +74,49 @@ public class UsersController : ControllerBase
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         return claim != null && Guid.TryParse(claim, out var id) ? id : null;
+    }
+
+    /// <summary>Returns all identity providers linked to the authenticated user.</summary>
+    [HttpGet("me/identities")]
+    public async Task<IActionResult> GetMyIdentities(CancellationToken ct)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null) return Unauthorized();
+
+        var identities = await _unitOfWork.UserIdentities.GetByUserAsync(userId.Value, ct);
+        return Ok(identities.Select(i => new
+        {
+            id = i.Id,
+            provider = i.Provider.ToString(),
+            emailClaim = i.EmailClaim,
+            isEmailVerified = i.IsEmailVerified,
+            isPrimary = i.IsPrimary,
+            linkedAt = i.LinkedAt,
+            lastSeenAt = i.LastSeenAt
+        }));
+    }
+
+    /// <summary>Unlinks an identity provider from the authenticated user (D2 — requires at least one remaining).</summary>
+    [HttpDelete("me/identities/{identityId:guid}")]
+    public async Task<IActionResult> UnlinkIdentity(Guid identityId, CancellationToken ct)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null) return Unauthorized();
+
+        var activeCount = await _unitOfWork.UserIdentities.CountActiveByUserAsync(userId.Value, ct);
+        if (activeCount <= 1)
+            return BadRequest(new { error = "Cannot unlink the only identity. Add another provider first." });
+
+        var identities = await _unitOfWork.UserIdentities.GetByUserAsync(userId.Value, ct);
+        var target = identities.FirstOrDefault(i => i.Id == identityId);
+        if (target is null) return NotFound();
+
+        // Soft delete — keep for audit trail
+        target.IsActive = false;
+        target.UnlinkedAt = DateTime.UtcNow;
+        await _unitOfWork.UserIdentities.UpdateAsync(target, ct);
+        await _unitOfWork.SaveChangesAsync(ct);
+
+        return Ok(new { message = "Identity unlinked successfully" });
     }
 }
