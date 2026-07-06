@@ -33,9 +33,18 @@ public class UserAlreadyWonFilterTests
     }
 
     [Fact]
-    public async Task IsEligible_WhenPrizeTypeIsGiftCard_AlwaysReturnsTrue()
+    // PrizeType.GiftCard was deprecated (Sprint 10 GC-5). GiftCard is now PrizeType.Product + Prize.GiftCardProviderId != null.
+    // The filter still returns true for Product prizes where the user has not won yet (checked via repo below).
+    // This test validates the path where a Product-type GiftCard prize is seen for the first time — repo returns false.
+    public async Task IsEligible_WhenPrizeTypeIsProduct_WithGiftCardProviderId_AlwaysReturnsTrue()
     {
-        var prize = new Prize { Id = Guid.NewGuid(), PrizeType = PrizeType.GiftCard };
+        var prizeId = Guid.NewGuid();
+        // GiftCard is now represented as Product + GiftCardProviderId != null
+        var prize = new Prize { Id = prizeId, PrizeType = PrizeType.Product, GiftCardProviderId = Guid.NewGuid() };
+        _repoMock
+            .Setup(r => r.UserAlreadyWonAsync(_userId, prizeId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
         var result = await _filter.IsEligibleAsync(prize, _ctx, CancellationToken.None);
         result.Should().BeTrue();
     }

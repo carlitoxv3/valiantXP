@@ -18,6 +18,17 @@ namespace ValiantXP.Application.InstantWin.Strategies;
 ///   3. Creates UserPrize with GiftCardCode
 /// Maps to the GiftCard branch + dbo.SetGiftCard call in dbo.InstantWin_Save.
 /// </summary>
+/// <remarks>
+/// OBSOLETE — Sprint 10 (GC-4): This strategy has been ABSORBED by <see cref="ProductPrizeAwardStrategy"/>.
+/// GiftCard delivery is no longer a separate PrizeType; it is a delivery mechanism for PrizeType.Product
+/// controlled by <c>Prize.GiftCardProviderId != null</c>.
+/// The synthetic "VXP-GC-GUID" fallback code generation here is NOT a real GiftCard code.
+/// DO NOT remove this file yet — Infrastructure must update <c>InstantWinAwarder</c> routing
+/// (currently dispatches by enum value PrizeType.GiftCard) before this class can be deleted.
+/// Once InstantWinAwarder routes by GiftCardProviderId instead of enum, this class will be safely unused.
+/// Tracked in Sprint 10 GC-5 (PrizeType.GiftCard removal).
+/// </remarks>
+[Obsolete("Use PrizeType.Product + Prize.GiftCardProviderId != null. Absorbed by ProductPrizeAwardStrategy. Remove after InstantWinAwarder is updated in Sprint 10 (GC-5).")]
 public class GiftCardPrizeAwardStrategy : IPrizeAwardStrategy
 {
     private readonly IApplicationDbContext _db;
@@ -29,7 +40,9 @@ public class GiftCardPrizeAwardStrategy : IPrizeAwardStrategy
         _providers = providers;
     }
 
-    public bool CanHandle(PrizeType prizeType) => prizeType == PrizeType.GiftCard;
+    // OBSOLETE: PrizeType.GiftCard has been removed. CanHandle intentionally returns false.
+    // GiftCard delivery is now handled by ProductPrizeAwardStrategy via Prize.GiftCardProviderId.
+    public bool CanHandle(PrizeType prizeType) => false;
 
     public async Task<UserPrize> AwardAsync(Prize prize, PrizeSelectionContext context, CancellationToken ct)
     {
@@ -66,7 +79,7 @@ public class GiftCardPrizeAwardStrategy : IPrizeAwardStrategy
             Id = Guid.NewGuid(),
             UserId = context.UserId,
             PrizeId = prize.Id,
-            PrizeType = PrizeType.GiftCard,
+            PrizeType = PrizeType.Product, // Was PrizeType.GiftCard — removed in Sprint 10 (GC-5)
             GiftCardCode = giftCardCode,
             Code = code,
             AwardedAt = context.Now,

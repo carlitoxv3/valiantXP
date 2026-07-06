@@ -22,6 +22,8 @@ public class UnitOfWork : IUnitOfWork
     private IFailedAttemptRepository? _failedAttempts;
     private IUserIdentityRepository? _userIdentities;
     private IGuestSessionRepository? _guestSessions;
+    private IGiftCardRepository? _giftCards;
+    private IGiftCardProviderRepository? _giftCardProviders;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -41,6 +43,10 @@ public class UnitOfWork : IUnitOfWork
     public IFailedAttemptRepository FailedAttempts => _failedAttempts ??= new FailedAttemptRepository(_context);
     public IUserIdentityRepository UserIdentities => _userIdentities ??= new UserIdentityRepository(_context);
     public IGuestSessionRepository GuestSessions => _guestSessions ??= new GuestSessionRepository(_context);
+
+    // GiftCard Module (Sprint 10)
+    public IGiftCardRepository GiftCards => _giftCards ??= new GiftCardRepository(_context);
+    public IGiftCardProviderRepository GiftCardProviders => _giftCardProviders ??= new GiftCardProviderRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

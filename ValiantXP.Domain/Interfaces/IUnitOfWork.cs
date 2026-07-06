@@ -19,5 +19,7 @@ public interface IUnitOfWork : IDisposable
     IFailedAttemptRepository FailedAttempts { get; }
     IUserIdentityRepository UserIdentities { get; }
     IGuestSessionRepository GuestSessions { get; }
+    IGiftCardRepository GiftCards { get; }
+    IGiftCardProviderRepository GiftCardProviders { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

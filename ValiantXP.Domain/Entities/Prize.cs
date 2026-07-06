@@ -47,4 +47,12 @@ public class Prize : Entity
     public string? ImageUrl { get; set; }
 
     public ICollection<UserPrize> UserPrizes { get; set; } = new List<UserPrize>();
+
+    /// <summary>
+    /// When set, this prize is delivered via the GiftCard code pool.
+    /// GiftCard is a DELIVERY MECHANISM for this prize, not a separate prize type.
+    /// Null = physical/digital product with internal code. NotNull = pool-based gift card delivery.
+    /// </summary>
+    public Guid? GiftCardProviderId { get; set; }
+    public GiftCardProvider? GiftCardProvider { get; set; }
 }

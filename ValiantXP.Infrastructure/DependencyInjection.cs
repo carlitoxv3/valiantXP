@@ -110,6 +110,10 @@ public static class DependencyInjection
         services.AddScoped<IPrizeAwardStrategy, GiftCardPrizeAwardStrategy>();
         services.AddScoped<IInstantWinAwarder, InstantWinAwarder>();
 
+        // GiftCard Module (Sprint 10)
+        services.AddScoped<IGiftCardRepository, GiftCardRepository>();
+        services.AddScoped<IGiftCardProviderRepository, GiftCardProviderRepository>();
+
         // GiftCard Providers — no external providers in base implementation
         // External providers can be registered by adding IGiftCardProvider implementations here
         // e.g., services.AddScoped<IGiftCardProvider, SomeExternalProvider>();

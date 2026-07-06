@@ -9,6 +9,7 @@ using ValiantXP.Application.InstantWin.Strategies;
 using ValiantXP.Domain.Entities;
 using ValiantXP.Domain.Enums;
 using ValiantXP.Domain.Interfaces;
+using ValiantXP.Domain.Exceptions;
 
 namespace ValiantXP.Tests.InstantWin;
 
@@ -16,6 +17,8 @@ public class ProductPrizeAwardStrategyTests
 {
     private readonly Mock<IApplicationDbContext> _dbMock;
     private readonly Mock<DbSet<UserPrize>> _userPrizeSetMock;
+    private readonly Mock<IUnitOfWork> _uowMock;
+    private readonly Mock<IGiftCardRepository> _giftCardRepoMock;
     private readonly ProductPrizeAwardStrategy _strategy;
     private readonly PrizeSelectionContext _ctx;
 
@@ -23,13 +26,22 @@ public class ProductPrizeAwardStrategyTests
     {
         _dbMock = new Mock<IApplicationDbContext>();
         _userPrizeSetMock = new Mock<DbSet<UserPrize>>();
+        _uowMock = new Mock<IUnitOfWork>();
+        _giftCardRepoMock = new Mock<IGiftCardRepository>();
 
         _dbMock.Setup(db => db.UserPrizes).Returns(_userPrizeSetMock.Object);
         _dbMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         _dbMock.Setup(db => db.TryDecrementPrizeStockAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                .ReturnsAsync(true);
 
-        _strategy = new ProductPrizeAwardStrategy(_dbMock.Object);
+        // GiftCard pool: by default no GiftCardProviderId is set on prizes in these tests,
+        // so TryAssignFromPoolAsync will not be called. Set up as returning null just in case.
+        _uowMock.Setup(u => u.GiftCards).Returns(_giftCardRepoMock.Object);
+        _giftCardRepoMock.Setup(r => r.TryAssignFromPoolAsync(
+                It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((GiftCard?)null);
+
+        _strategy = new ProductPrizeAwardStrategy(_dbMock.Object, _uowMock.Object);
         _ctx = new PrizeSelectionContext
         {
             UserId = Guid.NewGuid(),

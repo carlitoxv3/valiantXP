@@ -58,15 +58,19 @@ public class InstantWinAwarderTests
     }
 
     [Fact]
-    public async Task AwardAsync_RoutesToGiftCardStrategy()
+    // PrizeType.GiftCard was deprecated (Sprint 10 GC-5).
+    // GiftCard delivery is now PrizeType.Product + Prize.GiftCardProviderId != null.
+    // The awarder routes by PrizeType — Product strategy handles both physical products and GiftCard-delivered products.
+    public async Task AwardAsync_RoutesToProductStrategy_ForGiftCardDeliveredPrize()
     {
-        var giftCardMock = CreateStrategyMock(PrizeType.GiftCard);
-        var awarder = new InstantWinAwarder(new[] { giftCardMock.Object });
-        var prize = new Prize { PrizeType = PrizeType.GiftCard };
+        var productMock = CreateStrategyMock(PrizeType.Product);
+        var awarder = new InstantWinAwarder(new[] { productMock.Object });
+        // GiftCard-delivered prize: PrizeType = Product, GiftCardProviderId set by caller
+        var prize = new Prize { PrizeType = PrizeType.Product, GiftCardProviderId = Guid.NewGuid() };
 
         var result = await awarder.AwardAsync(prize, _ctx, CancellationToken.None);
 
-        result.PrizeType.Should().Be(PrizeType.GiftCard);
+        result.PrizeType.Should().Be(PrizeType.Product);
     }
 
     [Fact]

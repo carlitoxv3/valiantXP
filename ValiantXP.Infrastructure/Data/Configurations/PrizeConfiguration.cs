@@ -75,5 +75,14 @@ public class PrizeConfiguration : IEntityTypeConfiguration<Prize>
             .WithOne(up => up.Prize)
             .HasForeignKey(up => up.PrizeId)
             .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to fix the conflict
+
+        // GiftCard pool delivery channel (Sprint 10) — optional FK to GiftCardProvider.
+        // WithMany(x => x.Prizes) matches the ICollection<Prize> on GiftCardProvider,
+        // preventing EF from creating a shadow 'GiftCardProviderId1' property.
+        builder.HasOne(x => x.GiftCardProvider)
+            .WithMany(x => x.Prizes)
+            .HasForeignKey(x => x.GiftCardProviderId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
     }
 }

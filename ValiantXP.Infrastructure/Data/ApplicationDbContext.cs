@@ -30,6 +30,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserIdentity> UserIdentities => Set<UserIdentity>();
     public DbSet<GuestSession> GuestSessions => Set<GuestSession>();
 
+    // GiftCard Module (Sprint 10)
+    public DbSet<GiftCardProvider> GiftCardProviders => Set<GiftCardProvider>();
+    public DbSet<GiftCard> GiftCards => Set<GiftCard>();
+
     /// <inheritdoc/>
     public async Task<bool> TryDecrementPrizeStockAsync(Guid prizeId, CancellationToken ct = default)
     {
