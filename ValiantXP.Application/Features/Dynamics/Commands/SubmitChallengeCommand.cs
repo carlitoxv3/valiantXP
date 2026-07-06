@@ -114,6 +114,24 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
         // Detect Rally by the typed payload marker returned by RallyStrategy.
         bool isRallySubmission = dynamicResult.Payload is RallySubmissionPayload;
 
+        // Detect position_based mode (returned by CodeStrategy)
+        bool isPositionBased = false;
+        bool isPosWinner = false;
+        string? prizeTier = null;
+        Guid? overrideNextChallengeId = null;
+
+        if (dynamicResult.Payload is IDictionary<string, object> payloadDict
+            && payloadDict.TryGetValue("PositionBased", out var pbVal) && pbVal is true)
+        {
+            isPositionBased = true;
+            if (payloadDict.TryGetValue("IsWinner", out var iwVal) && iwVal is bool iwBool)
+                isPosWinner = iwBool;
+            if (payloadDict.TryGetValue("PrizeTier", out var ptVal))
+                prizeTier = ptVal?.ToString();
+            if (payloadDict.TryGetValue("OverrideNextChallengeId", out var ncVal) && ncVal is Guid ncGuid)
+                overrideNextChallengeId = ncGuid;
+        }
+
         // 8. Update or create user progress
         var now = DateTime.UtcNow;
         // For Rally, status = Pending (not Completed) — prize fires on winner selection.
@@ -144,11 +162,23 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
             await _unitOfWork.UserChallengeProgresses.UpdateAsync(progress, cancellationToken);
         }
 
+        // Position-based winner: reserve the prize so trivia can confirm it
+        if (isPositionBased && isPosWinner && prizeTier != null)
+        {
+            var prizes = await _unitOfWork.Prizes.GetByChallengeIdAsync(request.ChallengeId, cancellationToken);
+            var reservedPrize = prizes.FirstOrDefault(p => p.ExternalReference == prizeTier)
+                             ?? prizes.FirstOrDefault();
+            if (reservedPrize != null)
+                progress.ReservedPrizeId = reservedPrize.Id;
+        }
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         // 9. Publish ChallengeCompletedEvent ONLY for sync dynamics (Trivia, Survey, Code).
         //    Rally fires this event later via RallyWinnerSelectedEventHandler.
-        if (dynamicResult.Success && !isRallySubmission)
+        //    Position-based Code: skip InstantWin here — ChallengeCompletedEvent fires on Trivia step.
+        bool skipInstantWin = isPositionBased; // prize confirmed on trivia completion
+        if (dynamicResult.Success && !isRallySubmission && !skipInstantWin)
         {
             var completedEvent = new ChallengeCompletedEvent(request.UserId, request.ChallengeId, progress.Id);
             await _publisher.Publish(completedEvent, cancellationToken);
@@ -178,7 +208,11 @@ public class SubmitChallengeCommandHandler : IRequestHandler<SubmitChallengeComm
             Payload = dynamicResult.Payload,
             AwardedPrizeNames = awardedPrizeNames,
             PointsAwarded = totalPointsAwarded,
-            NextChallengeId = dynamicResult.Success ? challenge.NextChallengeId : null
+            // Position-based: only return NextChallengeId when user won (leads to trivia).
+            // If not a winner, null so the flow ends. Supports per-tier override.
+            NextChallengeId = isPositionBased
+                ? (isPosWinner ? (overrideNextChallengeId ?? challenge.NextChallengeId) : null)
+                : (dynamicResult.Success ? challenge.NextChallengeId : null)
         };
 
 

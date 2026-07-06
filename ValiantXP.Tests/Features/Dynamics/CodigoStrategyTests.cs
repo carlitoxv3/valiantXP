@@ -15,14 +15,23 @@ public class CodeStrategyTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICodeRepository> _mockCodeRepo;
+    private readonly Mock<IDynamicChallengeRepository> _mockChallengeRepo;
+    private readonly Mock<IUserChallengeProgressRepository> _mockProgressRepo;
     private readonly CodeStrategy _strategy;
 
     public CodeStrategyTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCodeRepo = new Mock<ICodeRepository>();
+        _mockChallengeRepo = new Mock<IDynamicChallengeRepository>();
+        _mockProgressRepo = new Mock<IUserChallengeProgressRepository>();
         _mockUnitOfWork.Setup(u => u.Codes).Returns(_mockCodeRepo.Object);
-        _strategy = new CodeStrategy(_mockUnitOfWork.Object);
+        _mockUnitOfWork.Setup(u => u.DynamicChallenges).Returns(_mockChallengeRepo.Object);
+        // Default: challenge has no position_based config (standard mode)
+        _mockChallengeRepo
+            .Setup(r => r.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((DynamicChallenge?)null);
+        _strategy = new CodeStrategy(_mockUnitOfWork.Object, _mockProgressRepo.Object);
     }
 
     [Fact]

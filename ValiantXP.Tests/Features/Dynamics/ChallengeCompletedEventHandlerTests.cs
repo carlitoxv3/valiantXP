@@ -18,9 +18,12 @@ public class ChallengeCompletedEventHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork = new();
     private readonly Mock<IPrizeRepository> _mockPrizeRepo = new();
+    private readonly Mock<IDynamicChallengeRepository> _mockChallengeRepo = new();
     private readonly Mock<IInstantWinEngine> _mockEngine = new();
     private readonly Mock<IInstantWinAwarder> _mockAwarder = new();
     private readonly Mock<MediatR.IPublisher> _mockPublisher = new();
+    private readonly Mock<IUserChallengeProgressRepository> _mockProgressRepo = new();
+    private readonly Mock<IUserPointMovementRepository> _mockPointRepo = new();
     private readonly ChallengeCompletedEventHandler _handler;
 
     private readonly Guid _userId = Guid.NewGuid();
@@ -30,12 +33,23 @@ public class ChallengeCompletedEventHandlerTests
     public ChallengeCompletedEventHandlerTests()
     {
         _mockUnitOfWork.Setup(u => u.Prizes).Returns(_mockPrizeRepo.Object);
+        _mockUnitOfWork.Setup(u => u.DynamicChallenges).Returns(_mockChallengeRepo.Object);
+        // Default: GetAsync returns a challenge; progressRepo returns null reservation
+        // so the position_based branch is skipped and normal InstantWin runs.
+        _mockChallengeRepo
+            .Setup(r => r.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new DynamicChallenge { Id = _challengeId, CampaignId = Guid.NewGuid(), ConfigurationJson = "{}" });
+        _mockProgressRepo
+            .Setup(r => r.GetLatestCodeProgressWithReservationAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((UserChallengeProgress?)null);
         _handler = new ChallengeCompletedEventHandler(
             _mockUnitOfWork.Object,
             _mockEngine.Object,
             _mockAwarder.Object,
             _mockPublisher.Object,
-            NullLogger<ChallengeCompletedEventHandler>.Instance);
+            NullLogger<ChallengeCompletedEventHandler>.Instance,
+            _mockProgressRepo.Object,
+            _mockPointRepo.Object);
     }
 
     private ChallengeCompletedEvent MakeEvent(Guid? submissionId = null)
